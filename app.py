@@ -1,53 +1,42 @@
 from flask import Flask, jsonify, render_template, request
+from flask_assets import Bundle, Environment
 from flask_cors import CORS
-import flask_login
-
-
-from flask_assets import Environment, Bundle
-
-from models import db
-
+from flask_login import LoginManager
 
 from config import Config
-
-app = Flask(__name__)
-CORS(app)
-app.config.from_object(Config)
-
-assets = Environment(app)
-assets.url = app.static_url_path
-scss = Bundle('scss/style.scss', filters='pyscss', output='css/style.css')
-assets.register('scss_all', scss)
+from models import User, db
+from router import router
 
 
-db.app = app
-db.init_app(app)
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(Config)
+    # set up CORS
+    CORS(app)
+    # set up Sass
+    assets = Environment(app)
+    assets.url = app.static_url_path
+    scss = Bundle("scss/style.scss", filters="pyscss", output="css/style.css")
+    assets.register("scss_all", scss)
+    # set up db
+    db.app = app
+    db.init_app(app)
+    # set up Flask Login
+    login_manager = LoginManager()
+    login_manager.init_app(app)
 
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.query.filter_by(id=user_id).first()
 
-@app.route("/", methods=["GET", 'POST'])
-def home():
-    """
-    Home page route
-    """
-    if request.method == 'POST':
-        message = request.form['message']
-        return jsonify(your_message=message)
-    return render_template("index.html")
+    # set up router
+    router(app)
 
-@app.route("/hello", methods=["GET"])
-def hello():
-    """
-    Hello route
-    """
-    return 'hello'
+    return app
 
-@app.route('/message', methods=['POST'])
-def message():
-    """
-    Message route
-    """
-    message = request.json.get("message")
-    return jsonify(your_message=message)
 
 if __name__ == "__main__":
+    app = create_app()
+    with app.app_context():
+        db.create_all()
     app.run(debug=True, host="0.0.0.0")

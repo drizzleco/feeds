@@ -7,6 +7,4 @@ gunicorn
 Flask-Assets
 pyscss
 Flask-Login
-
-
 Flask-SQLAlchemy
