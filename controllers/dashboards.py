@@ -2,8 +2,9 @@ import datetime
 
 from flask import jsonify, request
 from flask_login import current_user
+from slugify import slugify
 
-from helpers import slugify, token_or_session_authenticated
+from helpers import token_or_session_authenticated
 from models import db, Dashboard
 
 

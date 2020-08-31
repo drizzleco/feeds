@@ -34,10 +34,6 @@ def token_or_session_authenticated(user_scope):
     return decorator
 
 
-def slugify(name: str):
-    return name.lower().replace(" ", "-")
-
-
 def filter_params(
     params: Dict,
     allowed: List[str],

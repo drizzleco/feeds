@@ -1,8 +1,7 @@
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
+from slugify import slugify
 from werkzeug.security import check_password_hash, generate_password_hash
-
-from helpers import slugify
 
 db = SQLAlchemy()
 
