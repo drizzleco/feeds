@@ -6,6 +6,8 @@ from flask_login import current_user
 
 import models
 
+FEED_TYPES = ["text", "number", "boolean", "image"]
+
 
 def token_or_session_authenticated(user_scope):
     def decorator(f):
