@@ -2,6 +2,8 @@ from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
 
+from helpers import slugify
+
 db = SQLAlchemy()
 
 
@@ -15,9 +17,9 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
     created = db.Column(db.DateTime, nullable=False)
-    dashboards = db.relationship("Dashboard", backref="user")
-    feeds = db.relationship("Feed", backref="user")
-    tokens = db.relationship("Token", backref="user")
+    dashboards = db.relationship("Dashboard", backref="owner")
+    feeds = db.relationship("Feed", backref="owner")
+    tokens = db.relationship("Token", backref="owner")
 
     def set_password(self, password):
         self.password = generate_password_hash(password)
@@ -48,7 +50,7 @@ class Token(db.Model):
     user_scope = db.Column(db.Boolean, nullable=False, default=False)
     created = db.Column(db.DateTime, nullable=False)
     last_used = db.Column(db.DateTime, nullable=True, default=None)
-    owner = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    owner_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
     def to_dict(self):
         """returns dict representation"""
@@ -72,8 +74,13 @@ class Dashboard(db.Model):
     name = db.Column(db.String, nullable=False)
     slug = db.Column(db.String, nullable=False)
     created = db.Column(db.DateTime, nullable=False)
-    owner = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    owner_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     feeds = db.relationship("Feed", backref="dashboard")
+
+    def set_name(self, name):
+        """set name and slug"""
+        self.name = name
+        self.slug = slugify(name)
 
     def to_dict(self):
         """return dict representation"""
@@ -82,7 +89,7 @@ class Dashboard(db.Model):
             "name": self.name,
             "slug": self.slug,
             "created": self.created,
-            "owner": self.owner,
+            "owner": self.owner.username,
             "feeds": [feed.to_dict() for feed in self.feeds],
         }
 
@@ -97,7 +104,7 @@ class Feed(db.Model):
     slug = db.Column(db.String, nullable=False)
     kind = db.Column(db.String, nullable=False)
     created = db.Column(db.DateTime, nullable=False)
-    owner = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    owner_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     dashboard_id = db.Column(db.Integer, db.ForeignKey("dashboard.id"), nullable=False)
     data = db.relationship("Data", backref="feed")
     token_id = db.Column(db.Integer, db.ForeignKey("token.id"))

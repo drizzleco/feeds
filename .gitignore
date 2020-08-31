@@ -2,6 +2,7 @@
 
 # db stuff
 *.sqlite
+*.sqbpro
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
