@@ -24,7 +24,7 @@ def create_data(feed_slug):
     ):
         return (
             jsonify(
-                error=f"Invalid value. Type {feed.kind} was expected but got {value}."
+                error=f"Invalid value. Type '{feed.kind}' was expected but got '{value}'."
             ),
             400,
         )
