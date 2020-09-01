@@ -8,7 +8,8 @@ import models
 
 FEED_TYPES = ["text", "number", "boolean", "image"]
 
-def token_or_session_authenticated(user_scope):
+
+def token_or_session_authenticated(user_scope=False, feed_scope=False):
     def decorator(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
@@ -26,7 +27,7 @@ def token_or_session_authenticated(user_scope):
                 if not token_obj and current_user.is_anonymous:
                     return "Oops! Invalid token!", 401
                 if user_scope and current_user.is_anonymous:
-                    if not token_obj.user_scope():
+                    if not token_obj.user_scope:
                         return (
                             jsonify(error="Oops! Token does not have user scope!"),
                             401,
@@ -43,3 +44,14 @@ def filter_params(
     allowed: List[str],
 ):
     return {k: v for k, v in params.items() if k in allowed}
+
+
+def is_a_number(string: str) -> bool:
+    """
+    Check if a string is an integer or a float
+    """
+    if string.isdigit() or (
+        string.replace(".", "", 1).isdigit() and string.count(".") < 2
+    ):
+        return True
+    return False
