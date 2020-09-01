@@ -32,7 +32,7 @@ def create_data(feed_slug):
     data = Data(value=value, created=datetime.datetime.utcnow(), feed=feed)
     db.session.add(data)
     db.session.commit()
-    return jsonify(message="Data posted!"), 200
+    return jsonify(message="Data posted!", data=data.to_dict()), 200
 
 
 @token_or_session_authenticated(feed_scope=True)
