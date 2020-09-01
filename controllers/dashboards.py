@@ -10,7 +10,7 @@ from models import db, Dashboard
 
 @token_or_session_authenticated(user_scope=True)
 def get_dashboards():
-    return jsonify([dashboard.to_dict() for dashboard in current_user.dashboards]), 200
+    return jsonify(dashboards=[dashboard.to_dict() for dashboard in current_user.dashboards]), 200
 
 
 @token_or_session_authenticated(user_scope=True)

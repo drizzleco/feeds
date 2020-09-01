@@ -36,7 +36,7 @@ def delete_feed(client, slug):
 def test_get_feeds_returns_empty(client):
     register(client, "test", "test@gmail.com", "test", "test")
     resp = get_feeds(client)
-    assert not resp.json
+    assert not resp.json.get("feeds")
 
 
 def test_get_feeds_returns_feeds(client):
@@ -53,7 +53,9 @@ def test_get_feeds_returns_feeds(client):
         "owner": "test",
         "slug": "test-feed",
     }
-    assert any([(k, v) in result.items() for (k, v) in resp.json[0].items()])
+    assert any(
+        [(k, v) in result.items() for (k, v) in resp.json.get("feeds")[0].items()]
+    )
 
 
 def test_get_feed_doesnt_exist_fails(client):

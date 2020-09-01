@@ -10,7 +10,7 @@ from models import db, Feed, Dashboard
 
 @token_or_session_authenticated(user_scope=True)
 def get_feeds():
-    return jsonify([feed.to_dict() for feed in current_user.feeds]), 200
+    return jsonify(feeds=[feed.to_dict() for feed in current_user.feeds]), 200
 
 
 @token_or_session_authenticated(user_scope=True)
