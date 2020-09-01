@@ -67,7 +67,7 @@ def update_feed(feed_slug):
 
     name = request.json.get("name", None)
     if not name:
-        return jsonify(error="'Name' is required."), 400
+        return jsonify(error="Name is required."), 400
 
     feed.set_name(name)
     db.session.commit()
