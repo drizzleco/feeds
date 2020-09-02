@@ -40,10 +40,21 @@ def get_data(feed_slug):
     feed = Feed.query.filter_by(slug=feed_slug, owner=current_user).first()
     if not feed:
         return jsonify(error="Feed doesn't exist!"), 400
-    last = request.args.get("last", "10")
-    if not last.isnumeric():
-        return jsonify(error="Last must be an integer!"), 400
-    data = sorted(feed.data, key=lambda data: data.created, reverse=True)[: int(last)]
+    limit = request.args.get("limit", "10")
+    page = request.args.get("page", "1")
+    order = request.args.get("order", "desc")
+    if not limit.isnumeric():
+        return jsonify(error="Limit must be an integer!"), 400
+    if not page.isnumeric():
+        return jsonify(error="Page must be an integer!"), 400
+    if order not in ["asc", "desc"]:
+        return jsonify(error="Order must be either 'asc' or 'desc'"), 400
+    data = (
+        Data.query.filter_by(feed=feed)
+        .order_by(getattr(Data.created, order)())
+        .paginate(int(page), int(limit), False)
+        .items
+    )
     return jsonify(data=[data.to_dict() for data in data])
 
 
