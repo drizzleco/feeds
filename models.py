@@ -108,6 +108,11 @@ class Feed(db.Model):
     data = db.relationship("Data", backref="feed")
     token_id = db.Column(db.Integer, db.ForeignKey("token.id"))
 
+    def set_name(self, name):
+        """set name and slug"""
+        self.name = name
+        self.slug = slugify(name)
+
     def to_dict(self):
         """return dict representation"""
 
@@ -117,8 +122,8 @@ class Feed(db.Model):
             "slug": self.slug,
             "kind": self.kind,
             "created": self.created,
-            "owner": self.owner,
-            "dashboard": self.dashboard,
+            "owner": self.owner.username,
+            "dashboard": self.dashboard.slug,
             "data": [data.to_dict() for data in self.data],
         }
 

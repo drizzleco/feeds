@@ -1,8 +1,6 @@
 import os
 import random
 
-api_path = "/api"
-
 
 class Config:
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL") or "sqlite:///db.sqlite"

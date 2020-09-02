@@ -1,10 +1,12 @@
 from functools import wraps
 from typing import List, Dict
 
-from flask import redirect, request
+from flask import redirect, request, jsonify
 from flask_login import current_user
 
 import models
+
+FEED_TYPES = ["text", "number", "boolean", "image"]
 
 
 def token_or_session_authenticated(user_scope):
@@ -18,7 +20,7 @@ def token_or_session_authenticated(user_scope):
                 # try query string
                 token = request.args.get("token", None)
             elif current_user.is_anonymous:
-                return "Oops! you forgot to supply a token!", 401
+                return jsonify(error="Oops! you forgot to supply a token!"), 401
             # check token
             if token:
                 token_obj = models.Token.query.filter_by(secret=token).first()
@@ -26,7 +28,10 @@ def token_or_session_authenticated(user_scope):
                     return "Oops! Invalid token!", 401
                 if user_scope and current_user.is_anonymous:
                     if not token_obj.user_scope():
-                        return "Oops! Token does not have user scope!", 401
+                        return (
+                            jsonify(error="Oops! Token does not have user scope!"),
+                            401,
+                        )
             return f(*args, **kwargs)
 
         return wrapper

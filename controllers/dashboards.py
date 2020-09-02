@@ -28,7 +28,7 @@ def get_dashboard(dashboard_slug):
 def new_dashboard():
     name = request.json.get("name", None)
     if not name:
-        return jsonify(error="'Name' is required."), 400
+        return jsonify(error="Name is required."), 400
     dashboard = Dashboard.query.filter_by(
         slug=slugify(name), owner=current_user
     ).first()
@@ -56,7 +56,7 @@ def update_dashboard(dashboard_slug):
     ).first()
     name = request.json.get("name", None)
     if not name:
-        return jsonify(error="'Name' is required."), 400
+        return jsonify(error="Name is required."), 400
     if dashboard:
         dashboard.set_name(name)
         db.session.commit()

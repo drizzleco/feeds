@@ -29,6 +29,7 @@ def delete_dashboard(client, slug):
 
 
 def test_get_dashboards_returns_empty(client):
+    register(client, "test", "test@gmail.com", "test", "test")
     resp = get_dashboards(client)
     assert not resp.json
 
@@ -69,7 +70,7 @@ def test_create_duplicate_dash_fails(client):
 def test_create_dash_no_name_fails(client):
     register(client, "test", "test@gmail.com", "test", "test")
     resp = create_dashboard(client)
-    assert resp.json.get("error") == "'Name' is required."
+    assert resp.json.get("error") == "Name is required."
 
 
 def test_update_dash_succeeds(client):
@@ -90,7 +91,7 @@ def test_update_dash_no_name_fails(client):
     register(client, "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test")
     resp = update_dashboard(client, "test")
-    assert resp.json.get("error") == "'Name' is required."
+    assert resp.json.get("error") == "Name is required."
 
 
 def test_delete_dash_succeeds(client):
