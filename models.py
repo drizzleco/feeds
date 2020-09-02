@@ -2,7 +2,6 @@ from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 from slugify import slugify
 from werkzeug.security import check_password_hash, generate_password_hash
-
 db = SQLAlchemy()
 
 
@@ -112,7 +111,7 @@ class Feed(db.Model):
         """set name and slug"""
         self.name = name
         self.slug = slugify(name)
-
+        
     def to_dict(self):
         """return dict representation"""
 
