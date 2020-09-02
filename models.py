@@ -144,5 +144,5 @@ class Data(db.Model):
             "id": self.id,
             "value": self.value,
             "created": self.created,
-            "feed": self.dashboard,
+            "feed": self.feed.slug,
         }

@@ -31,7 +31,7 @@ def delete_dashboard(client, slug):
 def test_get_dashboards_returns_empty(client):
     register(client, "test", "test@gmail.com", "test", "test")
     resp = get_dashboards(client)
-    assert not resp.json
+    assert not resp.json.get("dashboards")
 
 
 def test_get_dashboards_returns_dashboards(client):
@@ -45,7 +45,9 @@ def test_get_dashboards_returns_dashboards(client):
         "owner": "username",
         "slug": "test",
     }
-    assert any([(k, v) in result.items() for (k, v) in resp.json[0].items()])
+    assert any(
+        [(k, v) in result.items() for (k, v) in resp.json.get("dashboards")[0].items()]
+    )
 
 
 def test_get_dash_doesnt_exist_fails(client):

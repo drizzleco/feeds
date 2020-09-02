@@ -6,4 +6,4 @@ from helpers import token_or_session_authenticated
 
 @token_or_session_authenticated(user_scope=True)
 def get_tokens():
-    return jsonify([token.to_dict() for token in current_user.tokens]), 200
+    return jsonify(tokens=[token.to_dict() for token in current_user.tokens]), 200

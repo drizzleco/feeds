@@ -1,6 +1,7 @@
 from controllers.sessions import *
 from controllers.dashboards import *
 from controllers.feeds import *
+from controllers.data import *
 from controllers.tokens import *
 
 api_path = "/api"
@@ -23,6 +24,10 @@ def router(app):
     app.add_url_rule(api_path + "/feeds/<feed_slug>", view_func=update_feed, methods=["PUT"])
     app.add_url_rule(api_path + "/feeds/new", view_func=new_feed, methods=["POST"])
     app.add_url_rule(api_path + "/feeds/<feed_slug>", view_func=delete_feed, methods=["DELETE"])
+    # data routes
+    app.add_url_rule(api_path + "/feeds/<feed_slug>/data", view_func=create_data, methods=["POST"])
+    app.add_url_rule(api_path + "/feeds/<feed_slug>/data", view_func=get_data, methods=["GET"])
+    app.add_url_rule(api_path + "/feeds/<feed_slug>/data/<data_id>", view_func=delete_data, methods=["DELETE"])
     # token routes
     app.add_url_rule(api_path + "/tokens", view_func=get_tokens, methods=["GET"])
 # fmt: on
