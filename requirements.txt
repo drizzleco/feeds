@@ -1,0 +1,10 @@
+black
+isort
+flask
+Flask-CORS
+pytest
+gunicorn
+Flask-Assets
+pyscss
+Flask-Login
+Flask-SQLAlchemy
