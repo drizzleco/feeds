@@ -64,6 +64,15 @@ def test_get_feed_doesnt_exist_fails(client):
     assert resp.json.get("error") == "Feed doesn't exist!"
 
 
+def test_get_another_user_feed_fails(client):
+    register(client, "test", "test@gmail.com", "test", "test")
+    create_dashboard(client, "test-dash")
+    create_feed(client, "test", "image", "test-dash")
+    register(client, "not-test", "nottest@gmail.com", "test", "test")
+    resp = get_feed(client, "test")
+    assert resp.json.get("error") == "Feed doesn't exist!"
+
+
 def test_create_feed_succeeds(client):
     register(client, "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test dash")
@@ -126,6 +135,15 @@ def test_update_feed_no_name_fails(client):
     assert resp.json.get("error") == "Name is required."
 
 
+def test_update_another_user_feed_fails(client):
+    register(client, "test", "test@gmail.com", "test", "test")
+    create_dashboard(client, "test-dash")
+    create_feed(client, "test", "image", "test-dash")
+    register(client, "not-test", "nottest@gmail.com", "test", "test")
+    resp = update_feed(client, "test", "another name")
+    assert resp.json.get("error") == "Feed doesn't exist!"
+
+
 def test_delete_feed_succeeds(client):
     register(client, "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test dash")
@@ -137,4 +155,13 @@ def test_delete_feed_succeeds(client):
 def test_delete_nonexistent_feed_fails(client):
     register(client, "test", "test@gmail.com", "test", "test")
     resp = delete_feed(client, "blah")
+    assert resp.json.get("error") == "Feed doesn't exist!"
+
+
+def test_delete_another_user_feed_fails(client):
+    register(client, "test", "test@gmail.com", "test", "test")
+    create_dashboard(client, "test-dash")
+    create_feed(client, "test", "image", "test-dash")
+    register(client, "not-test", "nottest@gmail.com", "test", "test")
+    resp = delete_feed(client, "test")
     assert resp.json.get("error") == "Feed doesn't exist!"
