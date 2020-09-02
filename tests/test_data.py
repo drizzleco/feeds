@@ -11,10 +11,10 @@ def create_data(client, feed_slug="", value="", token=""):
     return client.post(f"/api/feeds/{feed_slug}/data", json=json)
 
 
-def get_data(client, feed_slug="", last=0):
+def get_data(client, feed_slug="", **kwargs):
     url = f"/api/feeds/{feed_slug}/data"
-    if last:
-        url += "?last=" + str(last)
+    for k, v in kwargs.items():
+        url += f"?{k}={v}&"
     return client.get(url)
 
 
@@ -126,7 +126,24 @@ def test_get_data_succeeds(client):
     )
 
 
-def test_get_data_returns_in_order_of_created_date(client):
+def test_get_data_pagination_succeeds(client):
+    register(client, "name", "test", "test@gmail.com", "test", "test")
+    create_dashboard(client, "test dash")
+    create_feed(client, "test feed", "number", "test-dash")
+    create_data(client, "test-feed", "1")
+    create_data(client, "test-feed", "2")
+    create_data(client, "test-feed", "3")
+    resp = get_data(client, "test-feed", page=1, limit=2)
+    print(resp.json)
+    assert any(
+        [
+            data["id"] in range(3) and data["value"] in ["1", "2"]
+            for data in resp.json.get("data")
+        ]
+    )
+
+
+def test_get_data_desc_order_succeeds(client):
     register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test dash")
     create_feed(client, "test feed", "number", "test-dash")
@@ -138,19 +155,49 @@ def test_get_data_returns_in_order_of_created_date(client):
     assert dates == sorted(dates, reverse=True)
 
 
-def test_get_data_nonexistent_feed_fails(client):
-    register(client, "name", "test", "test@gmail.com", "test", "test")
-    resp = get_data(client, "blah", "test value")
-    assert resp.json.get("error") == "Feed doesn't exist!"
-
-
-def test_get_data_not_int_for_last_fails(client):
+def test_get_data_asc_order_succeeds(client):
     register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test dash")
     create_feed(client, "test feed", "number", "test-dash")
     create_data(client, "test-feed", "1")
-    resp = get_data(client, "test-feed", "asdf")
-    assert resp.json.get("error") == "Last must be an integer!"
+    create_data(client, "test-feed", "2")
+    create_data(client, "test-feed", "3")
+    resp = get_data(client, "test-feed", order="asc")
+    dates = [data["created"] for data in resp.json.get("data")]
+    assert dates == sorted(dates)
+
+
+def test_get_data_nonexistent_feed_fails(client):
+    register(client, "name", "test", "test@gmail.com", "test", "test")
+    resp = get_data(client, "blah")
+    assert resp.json.get("error") == "Feed doesn't exist!"
+
+
+def test_get_data_limit_not_int_fails(client):
+    register(client, "name", "test", "test@gmail.com", "test", "test")
+    create_dashboard(client, "test dash")
+    create_feed(client, "test feed", "number", "test-dash")
+    create_data(client, "test-feed", "1")
+    resp = get_data(client, "test-feed", limit="asdf")
+    assert resp.json.get("error") == "Limit must be an integer!"
+
+
+def test_get_data_page_not_int_fails(client):
+    register(client, "name", "test", "test@gmail.com", "test", "test")
+    create_dashboard(client, "test dash")
+    create_feed(client, "test feed", "number", "test-dash")
+    create_data(client, "test-feed", "1")
+    resp = get_data(client, "test-feed", page="asdf")
+    assert resp.json.get("error") == "Page must be an integer!"
+
+
+def test_get_data_invalid_order_fails(client):
+    register(client, "name", "test", "test@gmail.com", "test", "test")
+    create_dashboard(client, "test dash")
+    create_feed(client, "test feed", "number", "test-dash")
+    create_data(client, "test-feed", "1")
+    resp = get_data(client, "test-feed", order="asdf")
+    assert resp.json.get("error") == "Order must be either 'asc' or 'desc'"
 
 
 def test_get_data_on_another_users_feed_fails(client):
