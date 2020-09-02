@@ -23,7 +23,7 @@ def delete_data(client, feed_slug="", data_id=""):
 
 
 def test_create_data_text_succeeds(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test dash")
     create_feed(client, "test feed", "text", "test-dash")
     resp = create_data(client, "test-feed", "test value")
@@ -31,7 +31,7 @@ def test_create_data_text_succeeds(client):
 
 
 def test_create_data_number_succeeds(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test dash")
     create_feed(client, "test feed", "number", "test-dash")
     resp = create_data(client, "test-feed", "100")
@@ -39,7 +39,7 @@ def test_create_data_number_succeeds(client):
 
 
 def test_create_data_boolean_succeeds(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test dash")
     create_feed(client, "test feed", "boolean", "test-dash")
     resp = create_data(client, "test-feed", "true")
@@ -47,7 +47,7 @@ def test_create_data_boolean_succeeds(client):
 
 
 def test_create_data_image_succeeds(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test dash")
     create_feed(client, "test feed", "image", "test-dash")
     resp = create_data(client, "test-feed", "https://image-url.com/my-image-is-here")
@@ -55,13 +55,13 @@ def test_create_data_image_succeeds(client):
 
 
 def test_create_data_nonexistent_feed_fails(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     resp = create_data(client, "blah", "test value")
     assert resp.json.get("error") == "Feed doesn't exist!"
 
 
 def test_create_data_no_value_fails(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test dash")
     create_feed(client, "test feed", "text", "test-dash")
     resp = create_data(client, "test-feed")
@@ -69,7 +69,7 @@ def test_create_data_no_value_fails(client):
 
 
 def test_create_data_not_number_value_fails(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test dash")
     create_feed(client, "test feed", "number", "test-dash")
     resp = create_data(client, "test-feed", "100e3")
@@ -80,7 +80,7 @@ def test_create_data_not_number_value_fails(client):
 
 
 def test_create_data_not_boolean_value_fails(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test dash")
     create_feed(client, "test feed", "boolean", "test-dash")
     resp = create_data(client, "test-feed", "truee")
@@ -91,7 +91,7 @@ def test_create_data_not_boolean_value_fails(client):
 
 
 def test_create_data_not_image_value_fails(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test dash")
     create_feed(client, "test feed", "image", "test-dash")
     resp = create_data(client, "test-feed", "httsimage-url.com/.brokemy-image-is-here")
@@ -102,16 +102,16 @@ def test_create_data_not_image_value_fails(client):
 
 
 def test_create_data_on_another_users_feed_fails(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test-dash")
     create_feed(client, "test", "image", "test-dash")
-    register(client, "not-test", "nottest@gmail.com", "test", "test")
+    register(client, "name", "not-test", "nottest@gmail.com", "test", "test")
     resp = create_data(client, "test", "test value")
     assert resp.json.get("error") == "Feed doesn't exist!"
 
 
 def test_get_data_succeeds(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test dash")
     create_feed(client, "test feed", "number", "test-dash")
     create_data(client, "test-feed", "1")
@@ -127,7 +127,7 @@ def test_get_data_succeeds(client):
 
 
 def test_get_data_returns_in_order_of_created_date(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test dash")
     create_feed(client, "test feed", "number", "test-dash")
     create_data(client, "test-feed", "1")
@@ -139,13 +139,13 @@ def test_get_data_returns_in_order_of_created_date(client):
 
 
 def test_get_data_nonexistent_feed_fails(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     resp = get_data(client, "blah", "test value")
     assert resp.json.get("error") == "Feed doesn't exist!"
 
 
 def test_get_data_not_int_for_last_fails(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test dash")
     create_feed(client, "test feed", "number", "test-dash")
     create_data(client, "test-feed", "1")
@@ -154,16 +154,16 @@ def test_get_data_not_int_for_last_fails(client):
 
 
 def test_get_data_on_another_users_feed_fails(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test-dash")
     create_feed(client, "test", "image", "test-dash")
-    register(client, "not-test", "nottest@gmail.com", "test", "test")
+    register(client, "name", "not-test", "nottest@gmail.com", "test", "test")
     resp = get_data(client, "test")
     assert resp.json.get("error") == "Feed doesn't exist!"
 
 
 def test_delete_data_succeeds(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test dash")
     create_feed(client, "test feed", "number", "test-dash")
     create_data(client, "test-feed", "1")
@@ -172,13 +172,13 @@ def test_delete_data_succeeds(client):
 
 
 def test_delete_data_nonexistent_feed_fails(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     resp = delete_data(client, "blah", 1)
     assert resp.json.get("error") == "Feed doesn't exist!"
 
 
 def test_delete_data_nonexistent_data_id_fails(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test dash")
     create_feed(client, "test feed", "number", "test-dash")
     resp = delete_data(client, "test-feed", 1)
@@ -186,10 +186,10 @@ def test_delete_data_nonexistent_data_id_fails(client):
 
 
 def test_delete_data_on_another_users_feed_fails(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test-dash")
     create_feed(client, "test", "image", "test-dash")
     create_data(client, "test", "test value")
-    register(client, "not-test", "nottest@gmail.com", "test", "test")
+    register(client, "name", "not-test", "nottest@gmail.com", "test", "test")
     resp = delete_data(client, "test", 1)
     assert resp.json.get("error") == "Feed doesn't exist!"

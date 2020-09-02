@@ -34,12 +34,18 @@ def test_login_fails_user_not_found(client):
 
 
 def test_login_fails_invalid_password(client):
-    register(client, "username", "username@gmail.com", "password", "password")
+    register(client, "name", "username", "username@gmail.com", "password", "password")
     resp = login(client, "username", "notmypassword")
     assert resp.json.get("error") == "Invalid password."
 
 
-def test_login_succeeds(client):
-    register(client, "username", "username@gmail.com", "password", "password")
+def test_username_login_succeeds(client):
+    register(client, "name", "username", "username@gmail.com", "password", "password")
     resp = login(client, "username", "password")
+    assert resp.json.get("message") == "Successfully logged in!"
+
+
+def test_email_login_succeeds(client):
+    register(client, "name", "username", "username@gmail.com", "password", "password")
+    resp = login(client, "username@gmail.com", "password")
     assert resp.json.get("message") == "Successfully logged in!"
