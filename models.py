@@ -5,6 +5,7 @@ from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 from slugify import slugify
 from werkzeug.security import check_password_hash, generate_password_hash
+
 db = SQLAlchemy()
 
 
@@ -14,6 +15,7 @@ class User(UserMixin, db.Model):
     """
 
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
     username = db.Column(db.String, unique=True, nullable=False)
     email = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
@@ -32,6 +34,8 @@ class User(UserMixin, db.Model):
         """return dict representation"""
         return {
             "id": self.id,
+            "name": self.name,
+            "email": self.email,
             "username": self.username,
             "created": self.created,
             "dashboards": [dashboard.to_dict() for dashboard in self.dashboards],
@@ -124,7 +128,7 @@ class Feed(db.Model):
         """set name and slug"""
         self.name = name
         self.slug = slugify(name)
-        
+
     def to_dict(self):
         """return dict representation"""
 

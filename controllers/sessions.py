@@ -1,4 +1,5 @@
 import datetime
+import validators
 
 from flask import Flask, jsonify, render_template, request
 from flask_login import login_user, logout_user, current_user
@@ -10,11 +11,13 @@ def register():
     """Register a new user"""
     if not request.is_json:
         return jsonify(error="Missing JSON in request"), 400
-
+    name = request.json.get("name", None)
     username = request.json.get("username", None)
     email = request.json.get("email", None)
     password = request.json.get("password", None)
     confirm = request.json.get("confirm", None)
+    if not name:
+        return jsonify(error="Name is required."), 400
     if not username:
         return jsonify(error="Username is required."), 400
     if not email:
@@ -25,6 +28,8 @@ def register():
         return jsonify(error="Password confirmation is required."), 400
     if password != confirm:
         return jsonify(error="Passwords do not match"), 400
+    if not validators.email(email):
+        return jsonify(error="Invalid email"), 400
 
     user = User.query.filter_by(username=username).first()
     if user:
@@ -35,6 +40,7 @@ def register():
         return jsonify(error="Email already exists."), 400
 
     user = User(
+        name=name,
         username=username,
         email=email,
         created=datetime.datetime.utcnow(),
@@ -80,3 +86,28 @@ def logout():
     """Log user out"""
     logout_user()
     return jsonify(message="Successfully logged out"), 200
+
+
+def update_profile():
+    if not request.is_json:
+        return jsonify(error="Missing JSON in request"), 400
+
+    username = request.json.get("username", None)
+    name = request.json.get("name", None)
+    email = request.json.get("email", None)
+    password = request.json.get("password", None)
+    confirm = request.json.get("confirm", None)
+    if username:
+        current_user.username = username
+    if name:
+        current_user.name = name
+    if email:
+        if not validators.email(email):
+            return jsonify(error="Invalid email"), 400
+        current_user.email = email
+    if password:
+        if password != confirm:
+            return jsonify(error="Passwords do not match"), 400
+        current_user.set_password(password)
+    db.session.commit()
+    return jsonify(message="Successfully updated!", user=current_user.to_dict()), 200

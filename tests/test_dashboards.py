@@ -32,13 +32,13 @@ def delete_dashboard(client, slug):
 
 
 def test_get_dashboards_returns_empty(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     resp = get_dashboards(client)
     assert not resp.json.get("dashboards")
 
 
 def test_get_dashboards_returns_dashboards(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test")
     resp = get_dashboards(client)
     result = {
@@ -54,40 +54,40 @@ def test_get_dashboards_returns_dashboards(client):
 
 
 def test_get_dash_doesnt_exist_fails(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     resp = get_dashboard(client, "blah")
     assert resp.json.get("error") == "Dashboard doesn't exist!"
 
 
 def test_get_another_user_dash_fails(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test")
-    register(client, "not-test", "nottest@gmail.com", "test", "test")
+    register(client, "name", "not-test", "nottest@gmail.com", "test", "test")
     resp = get_dashboard(client, "test")
     assert resp.json.get("error") == "Dashboard doesn't exist!"
 
 
 def test_create_dash_succeeds(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     resp = create_dashboard(client, "test")
     assert resp.json.get("message") == "Dashboard created successfully!"
 
 
 def test_create_duplicate_dash_fails(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test")
     resp = create_dashboard(client, "test")
     assert resp.json.get("error") == "A dashboard with that name already exists!"
 
 
 def test_create_dash_no_name_fails(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     resp = create_dashboard(client)
     assert resp.json.get("error") == "Name is required."
 
 
 def test_update_dash_succeeds(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test")
     update_dashboard(client, "test", "tester")
     resp = get_dashboard(client, "tester")
@@ -95,42 +95,42 @@ def test_update_dash_succeeds(client):
 
 
 def test_update_nonexistent_dash_fails(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     resp = update_dashboard(client, "blah", "test")
     assert resp.json.get("error") == "Dashboard doesn't exist!"
 
 
 def test_update_dash_no_name_fails(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test")
     resp = update_dashboard(client, "test")
     assert resp.json.get("error") == "Name is required."
 
 
 def test_update_another_user_dash_fails(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test")
-    register(client, "not-test", "nottest@gmail.com", "test", "test")
+    register(client, "name", "not-test", "nottest@gmail.com", "test", "test")
     resp = update_dashboard(client, "test", "tester")
     assert resp.json.get("error") == "Dashboard doesn't exist!"
 
 
 def test_delete_dash_succeeds(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test")
     resp = delete_dashboard(client, "test")
     assert resp.json.get("message") == "Dashboard deleted!"
 
 
 def test_delete_nonexistent_dash_fails(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     resp = delete_dashboard(client, "blah")
     assert resp.json.get("error") == "Dashboard doesn't exist!"
 
 
 def test_delete_another_user_dash_fails(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test")
-    register(client, "not-test", "nottest@gmail.com", "test", "test")
+    register(client, "name", "not-test", "nottest@gmail.com", "test", "test")
     resp = delete_dashboard(client, "test")
     assert resp.json.get("error") == "Dashboard doesn't exist!"
