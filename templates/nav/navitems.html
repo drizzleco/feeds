@@ -1,0 +1,6 @@
+{% if not current_user.is_anonymous %}
+{% else %}
+<li><a href="/login">Login</a></li>
+<li><a href="/register">Register</a></li>
+{% endif %}
+<li><a href="/api">API Reference</a></li>

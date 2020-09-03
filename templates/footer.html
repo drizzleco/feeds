@@ -1,0 +1,18 @@
+<footer id="footer" class="page-footer cyan">
+    <div class="footer-copyright">
+        <div class="container">
+            &copy; Drizzle [[year]]</a>
+        </div>
+    </div>
+</footer>
+<script>
+    new Vue({
+        el: "#footer",
+        data: function () {
+            return {
+                year: new Date().getFullYear(),
+            };
+        },
+        delimiters: ['[[', ']]']
+    });
+</script>
