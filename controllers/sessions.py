@@ -58,7 +58,6 @@ def login():
     """Login a user"""
     if not request.is_json:
         return jsonify(error="Missing JSON in request"), 400
-
     username = request.json.get("username", None)
     password = request.json.get("password", None)
     remember = request.json.get("remember", False)

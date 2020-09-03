@@ -1,5 +1,21 @@
-.page-footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  padding-top: 0; }
+body {
+  height: 100vh; }
+
+  .page-footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding-top: 0; }
+
+    #login, #register {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      height: 100%; }
+      #login .form, #register .form {
+        display: inline-block;
+        padding: 32px 48px;
+        border: 1px solid #eee; }
+
+#register .row {
+  margin-bottom: 0; }
