@@ -20,6 +20,12 @@
                     <label for="password">Password</label>
                 </div>
             </div>
+            <p>
+                <label>
+                    <input type="checkbox" v-model="remember" />
+                    <span>Remember me</span>
+                </label>
+            </p>
             <br />
             <center>
                 <div class="row">
@@ -39,13 +45,15 @@
         data: {
             error: "",
             username: "",
-            password: ""
+            password: "",
+            remember: false,
         },
         methods: {
             handleLogin: function () {
                 axios.post(loginPath, {
                     username: this.username,
-                    password: this.password
+                    password: this.password,
+                    remember: this.remember
                 }).then(function (data) {
                     location.href = userHomepagePath;
                 }).catch((error) => {
