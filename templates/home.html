@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content%}
+<div id="home" class="container">
+    <div class="row">
+        <h3>Dashboards</h3>
+        <div class="row">
+            <dash-preview v-for="dashboard in dashboards" :key="dashboard.id" :dashboard="dashboard"></dash-preview>
+        </div>
+    </div>
+    <div class="fixed-action-btn">
+        <a class="btn-floating btn-large cyan">
+            <i class="large material-icons">add</i>
+        </a>
+        <ul>
+            <li><a class="btn-floating btn-medium tooltipped" data-position="left"
+                    data-tooltip="Create a new dashboard"><i class="material-icons">dashboard</i></a></li>
+        </ul>
+    </div>
+</div>
+<script type="module">
+    import {dashPreview} from './static/js/components/dashPreview.js'
+    Vue.component('dash-preview', dashPreview)
+    const vm = new Vue({
+        el: "#home",
+        delimiters: ["[[", "]]"],
+        data() {
+            return {
+                dashboards: [],
+            }
+        },
+        methods: {
+            createDash: function () {
+
+            }
+        },
+        mounted() {
+            axios.get(getDashboardsPath).then((response) => {
+                this.dashboards = response.data.dashboards
+            })
+        }
+    })
+</script>
+{% endblock%}
