@@ -10,7 +10,9 @@ api_path = "/api"
 # fmt: off
 def router(app):
     # VIEW ROUTES
-    app.add_url_rule("/", view_func=home, methods=["GET"])
+    app.add_url_rule("/", endpoint='home_view', view_func=home_view, methods=["GET"])
+    app.add_url_rule('/login', endpoint='login_view', view_func=login_view, methods=['GET'])
+    app.add_url_rule('/register', endpoint='register_view', view_func=register_view, methods=['GET'])
     # API ROUTES
     # user routes
     app.add_url_rule("/register", view_func=register, methods=["POST"])
