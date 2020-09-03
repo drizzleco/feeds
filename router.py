@@ -30,4 +30,6 @@ def router(app):
     app.add_url_rule(api_path + "/feeds/<feed_slug>/data/<data_id>", view_func=delete_data, methods=["DELETE"])
     # token routes
     app.add_url_rule(api_path + "/tokens", view_func=get_tokens, methods=["GET"])
+    app.add_url_rule(api_path + "/tokens/new", view_func=create_token, methods=["POST"])
+    app.add_url_rule(api_path + "/tokens/<token_id>", view_func=delete_token, methods=["DELETE"])
 # fmt: on

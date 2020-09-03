@@ -1,3 +1,6 @@
+import random
+import string
+
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 from slugify import slugify
@@ -50,16 +53,26 @@ class Token(db.Model):
     last_used = db.Column(db.DateTime, nullable=True, default=None)
     owner_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
+    def generate_secret(self):
+        self.secret = "".join(
+            random.choices(string.ascii_letters + string.digits, k=30)
+        )
+        while not Token.query.filter_by(secret=self.secret).first():
+            self.secret = "".join(
+                random.choices(string.ascii_letters + string.digits, k=30)
+            )
+
     def to_dict(self):
         """returns dict representation"""
         return {
             "id": self.id,
             "name": self.name,
             "secret": self.secret,
-            "allowed_feeds": [feed.id for feed in self.allowed_feeds],
+            "allowed_feeds": [feed.slug for feed in self.allowed_feeds],
+            "user_scope": self.user_scope,
             "created": self.created,
             "last_used": self.last_used,
-            "owner": self.owner,
+            "owner": self.owner.username,
         }
 
 
@@ -123,7 +136,7 @@ class Feed(db.Model):
             "created": self.created,
             "owner": self.owner.username,
             "dashboard": self.dashboard.slug,
-            "data": [data.to_dict() for data in self.data],
+            "data": [data.to_dict() for data in self.data][:10],
         }
 
 

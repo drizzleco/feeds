@@ -4,8 +4,11 @@ from test_dashboards import create_dashboard
 from test_feeds import create_feed
 
 
-def create_data(client, feed_slug="", value=""):
-    return client.post(f"/api/feeds/{feed_slug}/data", json={"value": value})
+def create_data(client, feed_slug="", value="", token=""):
+    json = {"value": value}
+    if token:
+        json["token"] = token
+    return client.post(f"/api/feeds/{feed_slug}/data", json=json)
 
 
 def get_data(client, feed_slug="", last=0):
@@ -98,6 +101,15 @@ def test_create_data_not_image_value_fails(client):
     )
 
 
+def test_create_data_on_another_users_feed_fails(client):
+    register(client, "test", "test@gmail.com", "test", "test")
+    create_dashboard(client, "test-dash")
+    create_feed(client, "test", "image", "test-dash")
+    register(client, "not-test", "nottest@gmail.com", "test", "test")
+    resp = create_data(client, "test", "test value")
+    assert resp.json.get("error") == "Feed doesn't exist!"
+
+
 def test_get_data_succeeds(client):
     register(client, "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test dash")
@@ -141,6 +153,15 @@ def test_get_data_not_int_for_last_fails(client):
     assert resp.json.get("error") == "Last must be an integer!"
 
 
+def test_get_data_on_another_users_feed_fails(client):
+    register(client, "test", "test@gmail.com", "test", "test")
+    create_dashboard(client, "test-dash")
+    create_feed(client, "test", "image", "test-dash")
+    register(client, "not-test", "nottest@gmail.com", "test", "test")
+    resp = get_data(client, "test")
+    assert resp.json.get("error") == "Feed doesn't exist!"
+
+
 def test_delete_data_succeeds(client):
     register(client, "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test dash")
@@ -162,3 +183,13 @@ def test_delete_data_nonexistent_data_id_fails(client):
     create_feed(client, "test feed", "number", "test-dash")
     resp = delete_data(client, "test-feed", 1)
     assert resp.json.get("error") == "Data point doesn't exist!"
+
+
+def test_delete_data_on_another_users_feed_fails(client):
+    register(client, "test", "test@gmail.com", "test", "test")
+    create_dashboard(client, "test-dash")
+    create_feed(client, "test", "image", "test-dash")
+    create_data(client, "test", "test value")
+    register(client, "not-test", "nottest@gmail.com", "test", "test")
+    resp = delete_data(client, "test", 1)
+    assert resp.json.get("error") == "Feed doesn't exist!"
