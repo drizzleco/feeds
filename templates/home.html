@@ -12,9 +12,21 @@
             <i class="large material-icons">add</i>
         </a>
         <ul>
-            <li><a class="btn-floating btn-medium tooltipped" data-position="left"
+            <li><a class="btn-floating btn-large tooltipped modal-trigger" href="#new-dashboard" data-position="left"
                     data-tooltip="Create a new dashboard"><i class="material-icons">dashboard</i></a></li>
         </ul>
+    </div>
+    <div id="new-dashboard" class="modal">
+        <div class="modal-content">
+            <h4>Create a new dashboard</h4>
+            <input type="text" name="name" id="name" v-model="name" />
+            <label for="name">Dashboard Name</label>
+            <p class="red-text">[[error]]</p>
+        </div>
+        <div class="modal-footer">
+            <a class="modal-close waves-effect waves-cyan btn-flat">Cancel</a>
+            <a class="waves-effect waves-cyan btn-flat" @click="createDash()">Create [[name? name : 'Dashboard']]</a>
+        </div>
     </div>
 </div>
 <script type="module">
@@ -25,12 +37,18 @@
         delimiters: ["[[", "]]"],
         data() {
             return {
+                name: '',
+                error: '',
                 dashboards: [],
             }
         },
         methods: {
             createDash: function () {
-
+                axios.post(createDashboardPath, {name:this.name}).then((response) => {
+                    location.href = apiPath + '/dashboard/' + response.data.dashboard.slug
+                }).catch((error) => {
+                    this.error = error.response.data.error;
+                });
             }
         },
         mounted() {
