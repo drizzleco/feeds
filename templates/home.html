@@ -51,7 +51,7 @@
                 });
             }
         },
-        mounted() {
+        created() {
             axios.get(getDashboardsPath).then((response) => {
                 this.dashboards = response.data.dashboards
             })
