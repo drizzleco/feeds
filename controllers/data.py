@@ -5,7 +5,7 @@ from flask import jsonify, request
 from flask_login import current_user
 from sqlalchemy import desc
 
-from helpers import is_a_number, token_or_session_authenticated
+from helpers import token_or_session_authenticated
 from models import Data, Feed, db
 
 
@@ -15,11 +15,14 @@ def create_data(feed_slug):
     if not feed:
         return jsonify(error="Feed doesn't exist!"), 400
     value = request.json.get("value", None)
-    if not value:
+    if value is None:
         return jsonify(error="Value is required."), 400
     if (
-        (feed.kind == "number" and not is_a_number(value))
-        or (feed.kind == "boolean" and value.lower() not in ["true", "false"])
+        (
+            feed.kind == "number"
+            and not (isinstance(value, int) or isinstance(value, float))
+        )
+        or (feed.kind == "boolean" and not isinstance(value, bool))
         or (feed.kind == "image" and not validators.url(value))
     ):
         return (
@@ -29,7 +32,7 @@ def create_data(feed_slug):
             400,
         )
 
-    data = Data(value=value, created=datetime.datetime.utcnow(), feed=feed)
+    data = Data(value=str(value), created=datetime.datetime.utcnow(), feed=feed)
     db.session.add(data)
     db.session.commit()
     return jsonify(message="Data posted!", data=data.to_dict()), 200

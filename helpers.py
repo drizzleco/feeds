@@ -64,14 +64,3 @@ def token_or_session_authenticated(user_scope=False, feed_scope=False):
         return wrapper
 
     return decorator
-
-
-def is_a_number(string: str) -> bool:
-    """
-    Check if a string is an integer or a float
-    """
-    if string.isdigit() or (
-        string.replace(".", "", 1).isdigit() and string.count(".") < 2
-    ):
-        return True
-    return False

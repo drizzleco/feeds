@@ -139,8 +139,13 @@ class Feed(db.Model):
             "kind": self.kind,
             "created": self.created,
             "owner": self.owner.username,
-            "dashboard": self.dashboard.slug,
-            "data": [data.to_dict() for data in self.data][:10],
+            "dashboard": self.dashboard.slug if self.dashboard else None,
+            "data": [
+                data.to_dict()
+                for data in sorted(
+                    self.data, key=lambda data: data.created, reverse=True
+                )
+            ][:10],
         }
 
 
@@ -154,12 +159,29 @@ class Data(db.Model):
     created = db.Column(db.DateTime, nullable=False)
     feed_id = db.Column(db.Integer, db.ForeignKey("feed.id"), nullable=False)
 
+    def get_value(self):
+        if self.feed.kind == "number":
+            # number type
+            if "." in self.value:
+                return float(self.value)
+            else:
+                return int(self.value)
+        elif self.feed.kind == "boolean":
+            # boolean type
+            if self.value == "True":
+                return True
+            else:
+                return False
+        else:
+            # text or image url type
+            return self.value
+
     def to_dict(self):
         """return dict representation"""
 
         return {
             "id": self.id,
-            "value": self.value,
+            "value": self.get_value(),
             "created": self.created,
             "feed": self.feed.slug,
         }
