@@ -68,7 +68,8 @@ def update_feed(feed_slug):
     name = request.json.get("name", None)
     if not name:
         return jsonify(error="Name is required."), 400
-
+    if Feed.query.filter_by(slug=slugify(name), owner=current_user).first():
+        return jsonify(error="A feed with that name already exists!"), 400
     feed.set_name(name)
     db.session.commit()
     return jsonify(message="Feed updated successfully!", feed=feed.to_dict())
