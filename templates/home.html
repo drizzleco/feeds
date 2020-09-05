@@ -45,7 +45,7 @@
         methods: {
             createDash: function () {
                 axios.post(createDashboardPath, {name:this.name}).then((response) => {
-                    location.href = apiPath + '/dashboard/' + response.data.dashboard.slug
+                    location.href = '/dashboard/' + response.data.dashboard.slug
                 }).catch((error) => {
                     this.error = error.response.data.error;
                 });
