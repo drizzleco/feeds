@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+{% block content%}
+<div id="feed" class="container">
+    <h3>[[feed.name]]</h3>
+    <h6 v-if="data.length">Last updated: [[timeDiffFromNow(feed.data[0].created)]] ago</h6>
+    <h6>Created on: [[toLocaleString(feed.created)]]</h6>
+    <h6>Kind: [[feed.kind]]</h6>
+    <h5>Last Value:</h5>
+    <div v-if="!data.length" class="center-align">
+        <h4>No data yet!</h4>
+        <a class="waves-effect waves-light btn cyan modal-trigger" href="#help">Get Started!</a>
+    </div>
+    <div v-if="data.length" class="d-flex-center">
+        <h5 v-if="feed.kind=='text'">[[data[0].value]]</h5>
+        <h2 v-if="feed.kind=='number'">[[data[0].value]]</h2>
+        <img width="100%" :src="data[0].value" v-if="feed.kind=='image'">
+        <div v-if="feed.kind=='boolean'" :class="'bool-mark ' + data[0].value"></div>
+    </div>
+    <div v-if="data.length">
+        <h5>Data Log:</h5>
+        <div class="container">
+            <table class="highlight centered">
+                <thead>
+                    <tr>
+                        <th>Value</th>
+                        <th>Created</th>
+                        <th> </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="point in data" :key="point.id">
+                        <td v-if="feed.kind=='image'"><img width="100%" :src="point.value"></td>
+                        <td v-else><span>[[point.value]]</spanv-if="feed.kind=='image'">
+                        </td>
+                        <td>[[toLocaleString(point.created)]]</td>
+                        <td> <a class="btn-floating btn-small waves-effect waves-light red tooltipped"
+                                data-tooltip="Delete data point" data-position="left" @click="deleteData(point.id)"><i
+                                    class="material-icons">clear</i></a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="pagination-wrapper row">
+                <h6>Total: [[total]]</h6>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed-action-btn">
+        <a class="btn-floating btn-large cyan">
+            <i class="large material-icons">settings</i>
+        </a>
+        <ul>
+            <li><a class="btn-floating btn-large tooltipped modal-trigger" href="#help" data-position="left"
+                    data-tooltip="Get started"><i class="material-icons">help</i></a></li>
+            <li><a class="btn-floating btn-large tooltipped modal-trigger" href="#new-data" data-position="left"
+                    data-tooltip="Create a data point"><i class="material-icons">view_stream</i></a></li>
+            <li><a class="btn-floating btn-large tooltipped modal-trigger" href="#edit-feed" data-position="left"
+                    :data-tooltip="'Edit ' + feed.name"><i class="material-icons">create</i></a></li>
+            <li><a class="btn-floating btn-large red tooltipped modal-trigger" href="#delete-feed" data-position="left"
+                    :data-tooltip="'Delete ' + feed.name"><i class="material-icons">clear</i></a></li>
+        </ul>
+    </div>
+    <div id="help" class="modal">
+        <div class="modal-content">
+            <h4>Get Started</h4>
+            <h6>To add a data point to '[[feed.name]]':</h6>
+            <ol>
+                <li>Register a token in <a href="/devices">Devices</a></li>
+                <li>
+                    Send a POST request to
+                    <pre><code>https://[[hostname]]/api/feeds/[[feed.slug]]/data</code></pre>
+                    with data:
+                    <pre><code>{"value": [VALUE_TO_POST_HERE], "token": [TOKEN_HERE]}</code></pre>
+                </li>
+            </ol>
+            <h6>cURL:</h6>
+            <pre><code>curl --request POST \
+    --url https://[[hostname]]/api/feeds/[[feed.slug]]/data \
+    --header 'content-type: application/json' \
+    --data '{"value": [VALUE_TO_POST_HERE], "token": [TOKEN_HERE]}'</code></pre>
+            <h6>Check out the <a href="/api">docs</a>!</h6>
+        </div>
+        <div class="modal-footer">
+            <a class="modal-close waves-effect waves-cyan btn-flat">Close</a>
+        </div>
+    </div>
+    <div id="new-data" class="modal">
+        <div class="modal-content">
+            <h4>Add a data point</h4>
+            <label for="value">Value</label>
+            <input type="text" name="value" id="value" v-model="dataValue" />
+            <p class="red-text">[[dataError]]</p>
+        </div>
+        <div class="modal-footer">
+            <a class="modal-close waves-effect waves-cyan btn-flat">Cancel</a>
+            <a class="waves-effect waves-cyan btn-flat" @click="createData()">Post Data</a>
+        </div>
+    </div>
+    <div id="edit-feed" class="modal">
+        <div class="modal-content">
+            <h4>Edit [[feed.name]]</h4>
+            <input type="text" name="name" id="name" v-model="newFeedName" />
+            <label for="name">Feed Name</label>
+            <p class="red-text">[[feedError]]</p>
+        </div>
+        <div class="modal-footer">
+            <a class="modal-close waves-effect waves-cyan btn-flat">Cancel</a>
+            <a class="waves-effect waves-cyan btn-flat" @click="updateFeed()">Save</a>
+        </div>
+    </div>
+    <div id="delete-feed" class="modal">
+        <div class="modal-content">
+            <h4>Delete [[feed.name]]?</h4>
+            <p>Are you sure you want to delete [[feed.name]]? This can't be undone!</p>
+        </div>
+        <div class="modal-footer">
+            <a class="modal-close waves-effect waves-cyan btn-flat">Cancel</a>
+            <a class="waves-effect waves-cyan btn-flat" @click="deleteFeed()">Delete</a>
+        </div>
+    </div>
+</div>
+<script type="module">
+    const vm = new Vue({
+        el: "#feed",
+        delimiters: ["[[", "]]"],
+        data() {
+            return {
+                feed: {},
+                data: [],
+                total: 0,
+                newFeedName: '',
+                feedError: '',
+                dataValue: '',
+                dataError: '',
+            }
+        },
+        computed: {
+            hostname: function() {
+                return location.hostname
+            },
+            dataPath: function() {
+                return getFeedsPath + '/' + this.feed.slug + '/data'
+            }
+        },
+        methods: {
+            getData: function() {
+                axios.get(this.dataPath)
+                .then((response) => {
+                    this.data = response.data.data
+                    this.total = response.data.total
+                });
+            },
+            createData: function() {
+                axios.post(this.dataPath, {
+                    value:this.dataValue, 
+                })
+                .then((response) => {
+                    this.getData()
+                    $('#new-data').modal('close')
+                }).catch((error) => {
+                    this.dataError = error.response.data.error;
+                });
+            },
+            deleteData: function(dataID) {
+                axios.delete(this.dataPath + '/' + dataID)
+                .then((response) => {
+                    this.getData()
+                }).catch((error) => {
+                    console.log(error.response.data.error)
+                });
+            },
+            updateFeed: function() {
+                axios.put(getFeedsPath + '/' + this.feed.slug, {
+                    name:this.newFeedName
+                })
+                .then((response) => {
+                    location.href = '/feed/' + response.data.feed.slug
+                }).catch((error) => {
+                    this.feedError = error.response.data.error;
+                });
+            },
+            deleteFeed: function() {
+                axios.delete(getFeedsPath + '/' + this.feed.slug)
+                .then((response) => {
+                    location.href = '/dashboard/' + this.feed.dashboard
+                });
+            },
+            toLocaleString,
+            timeDiffFromNow
+        },
+        beforeCreate() {
+            axios.get(getFeedsPath + '/{{feed_slug}}')
+            .then((response) => {
+                this.feed = response.data
+                this.newFeedName = this.feed.name
+                this.data = this.feed.data
+                this.total = this.data.length
+            }).catch((error) => {
+                history.back()
+            })
+        },
+    })
+</script>
+{% endblock%}

@@ -26,3 +26,8 @@ def user_homepage_view():
 @login_required
 def dashboard_view(dashboard_slug):
     return render_template("dashboard.html", dashboard_slug=dashboard_slug)
+
+
+@login_required
+def feed_view(feed_slug):
+    return render_template("feed.html", feed_slug=feed_slug)

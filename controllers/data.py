@@ -18,12 +18,17 @@ def create_data(feed_slug):
     if value is None:
         return jsonify(error="Value is required."), 400
     if (
-        (feed.kind == "number" and not (isinstance(value, int) or isinstance(value, float)))
+        (
+            feed.kind == "number"
+            and not (isinstance(value, int) or isinstance(value, float))
+        )
         or (feed.kind == "boolean" and not isinstance(value, bool))
         or (feed.kind == "image" and not validators.url(value))
     ):
         return (
-            jsonify(error=f"Invalid value. Type '{feed.kind}' was expected but got '{value}'."),
+            jsonify(
+                error=f"Invalid value. Type '{feed.kind}' was expected but got '{value}'."
+            ),
             400,
         )
 
@@ -47,13 +52,14 @@ def get_data(feed_slug):
         return jsonify(error="Page must be an integer!"), 400
     if order not in ["asc", "desc"]:
         return jsonify(error="Order must be either 'asc' or 'desc'"), 400
+    data_query = Data.query.filter_by(feed=feed)
     data = (
-        Data.query.filter_by(feed=feed)
-        .order_by(getattr(Data.created, order)())
+        data_query.order_by(getattr(Data.created, order)())
         .paginate(int(page), int(limit), False)
         .items
     )
-    return jsonify(data=[data.to_dict() for data in data])
+    total = data_query.count()
+    return jsonify(data=[data.to_dict() for data in data], total=total)
 
 
 @token_or_session_authenticated(feed_scope=True)
