@@ -3,10 +3,8 @@ const loginPath = '/login'
 const registerPath = '/register'
 const logoutPath = '/logout'
 const userHomepagePath = '/home'
-
-document.onload = function () {
-    $('.sidenav').sidenav();
-};
+const getDashboardsPath = apiPath + '/dashboards'
+const createDashboardPath = apiPath + '/dashboards/new'
 
 function logout() {
     axios.delete(logoutPath).then(function () {
