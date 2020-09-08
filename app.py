@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template, request, redirect, url_for
+from flask import Flask, jsonify, redirect, render_template, request, url_for
 from flask_assets import Bundle, Environment
 from flask_cors import CORS
 from flask_login import LoginManager

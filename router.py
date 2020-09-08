@@ -1,7 +1,7 @@
-from controllers.sessions import *
 from controllers.dashboards import *
-from controllers.feeds import *
 from controllers.data import *
+from controllers.feeds import *
+from controllers.sessions import *
 from controllers.tokens import *
 from controllers.views import *
 

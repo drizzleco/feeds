@@ -18,17 +18,12 @@ def create_data(feed_slug):
     if value is None:
         return jsonify(error="Value is required."), 400
     if (
-        (
-            feed.kind == "number"
-            and not (isinstance(value, int) or isinstance(value, float))
-        )
+        (feed.kind == "number" and not (isinstance(value, int) or isinstance(value, float)))
         or (feed.kind == "boolean" and not isinstance(value, bool))
         or (feed.kind == "image" and not validators.url(value))
     ):
         return (
-            jsonify(
-                error=f"Invalid value. Type '{feed.kind}' was expected but got '{value}'."
-            ),
+            jsonify(error=f"Invalid value. Type '{feed.kind}' was expected but got '{value}'."),
             400,
         )
 

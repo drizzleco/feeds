@@ -28,7 +28,5 @@ def test_update_nonmatching_passwords_fails(client):
 
 def test_update_succeeds(client):
     register(client, "name", "username", "my@email.com", "password", "password")
-    resp = update_profile(
-        client, name="tester", username="bob", email="email@google.com"
-    )
+    resp = update_profile(client, name="tester", username="bob", email="email@google.com")
     assert resp.json.get("message") == "Successfully updated!"

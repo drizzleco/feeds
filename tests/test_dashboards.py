@@ -48,9 +48,7 @@ def test_get_dashboards_returns_dashboards(client):
         "owner": "username",
         "slug": "test",
     }
-    assert any(
-        [(k, v) in result.items() for (k, v) in resp.json.get("dashboards")[0].items()]
-    )
+    assert any([(k, v) in result.items() for (k, v) in resp.json.get("dashboards")[0].items()])
 
 
 def test_get_dash_doesnt_exist_fails(client):
