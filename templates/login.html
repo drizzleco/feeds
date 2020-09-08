@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block content %}
+<div id="login">
+    <div class="form grey lighten-4 row">
+        <form class="col s12">
+            <div class="row">
+                <div class="col s12">
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s12">
+                    <input type="text" name="username" id="username" v-model="username" />
+                    <label for="username">Username/Email</label>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="input-field col s12">
+                    <input type="password" name="password" id="password" v-model="password" />
+                    <label for="password">Password</label>
+                </div>
+            </div>
+            <p>
+                <label>
+                    <input type="checkbox" v-model="remember" />
+                    <span>Remember me</span>
+                </label>
+            </p>
+            <br />
+            <center>
+                <div class="row">
+                    <button type="button" class="col s12 btn btn-large waves-effect cyan"
+                        @click="handleLogin">Login</button>
+                </div>
+                <p class="red-text">[[error]]</p>
+                <a href="/register">Don't have an account? Register</a>
+            </center>
+        </form>
+    </div>
+</div>
+<script>
+    const vm = new Vue({
+        el: "#login",
+        delimiters: ["[[", "]]"],
+        data: {
+            error: "",
+            username: "",
+            password: "",
+            remember: false,
+        },
+        methods: {
+            handleLogin: function () {
+                axios.post(loginPath, {
+                    username: this.username,
+                    password: this.password,
+                    remember: this.remember
+                }).then(function (data) {
+                    location.href = userHomepagePath;
+                }).catch((error) => {
+                    this.error = error.response.data.error;
+                });
+            }
+        }
+    })
+</script>
+{% endblock %}
