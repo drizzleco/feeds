@@ -1,1 +1,1 @@
-// js here
+$('.sidenav').sidenav();

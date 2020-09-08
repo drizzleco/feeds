@@ -1,10 +1,48 @@
 {% extends 'base.html' %}
 
 {% block content%}
-<h1>Welcome to your Flask App!</h1>
-<h2>Your app is up and running!</h2>
-<form action="/" method="post">
-    <input type="text" name="message" placeholder="Your message">
-    <input type="submit">
-</form>
+<div class="section no-pad-bot" id="index-banner">
+    <div class="container">
+        <br><br>
+        <h1 class="header center cyan-text">Feeds</h1>
+        <div class="row center">
+            <h5 class="header col s12 light">IoT Data Feeds Platform</h5>
+        </div>
+        <div class="row center">
+            <a href="/login" class="btn-large waves-effect waves-light cyan">Login</a>
+            <a href="/register" class="btn-large waves-effect waves-light cyan">Register</a>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="section">
+        <div class="row">
+            <div class="col s12 m4">
+                <div class="icon-block">
+                    <h2 class="center light-blue-text"><i class="material-icons">dashboard</i></h2>
+                    <h5 class="center">Dashboards</h5>
+                    <p class="light center">View your feeds.</p>
+                </div>
+            </div>
+            <div class="col s12 m4">
+                <div class="icon-block">
+                    <h2 class="center light-blue-text"><i class="material-icons">view_stream</i></h2>
+                    <h5 class="center">Feeds</h5>
+                    <p class="light center">Organize your data.</p>
+                </div>
+            </div>
+            <div class="col s12 m4">
+                <div class="icon-block">
+                    <h2 class="center light-blue-text"><i class="material-icons">memory</i></h2>
+                    <h5 class="center">Tokens</h5>
+                    <p class="light center">Authenticate your data sources.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br><br>
+</div>
+
+
+
 {% endblock%}

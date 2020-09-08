@@ -3,11 +3,15 @@ from controllers.dashboards import *
 from controllers.feeds import *
 from controllers.data import *
 from controllers.tokens import *
+from controllers.views import *
 
 api_path = "/api"
 
 # fmt: off
 def router(app):
+    # VIEW ROUTES
+    app.add_url_rule("/", view_func=home, methods=["GET"])
+    # API ROUTES
     # user routes
     app.add_url_rule("/register", view_func=register, methods=["POST"])
     app.add_url_rule("/login", view_func=login, methods=["POST"])
