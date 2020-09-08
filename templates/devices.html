@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block content%}
+<div id="devices" class="container">
+    <h2>Devices</h2>
+    <div class="fixed-action-btn">
+        <a class="btn-floating btn-large tooltipped modal-trigger cyan" href="#new" data-position="left"
+            data-tooltip="Add device"><i class="material-icons">add</i></a>
+    </div>
+    <table class="highlight centered responsive-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Token</th>
+                <th>Feeds</th>
+                <th>User Scope?</th>
+                <th>Last Used</th>
+                <th>Created</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr is="device-row" v-for="token in tokens" :key="token.id" :token="token" />
+        </tbody>
+    </table>
+
+
+    <div id="new-data" class="modal">
+        <div class="modal-content">
+            <h4>Add device</h4>
+        </div>
+        <div class="modal-footer">
+            <a class="modal-close waves-effect waves-cyan btn-flat">Cancel</a>
+            <a class="waves-effect waves-cyan btn-flat" @click="createToken()">Add Device</a>
+        </div>
+    </div>
+
+</div>
+<script type="module">
+    import {deviceRow} from './static/js/components/deviceRow.js'
+    Vue.component('device-row', deviceRow)
+    const vm = new Vue({
+        el: "#devices",
+        delimiters: ["[[", "]]"],
+        data() {
+            return {
+                tokens: []
+            }
+        },
+        methods: {
+            getTokens: function() {
+                
+            }
+        },
+        beforeCreate() {
+            axios.get(tokensPath)
+            .then((response) => {
+                this.tokens = response.data.tokens
+            });
+        },
+    })
+</script>
+{% endblock%}
