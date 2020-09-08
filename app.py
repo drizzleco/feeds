@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request, redirect, url_for
 from flask_assets import Bundle, Environment
 from flask_cors import CORS
 from flask_login import LoginManager
@@ -28,6 +28,11 @@ def create_app():
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.filter_by(id=user_id).first()
+
+    @login_manager.unauthorized_handler
+    def unauthorized():
+        # do stuff
+        return redirect(url_for("login_view"))
 
     # set up router
     router(app)

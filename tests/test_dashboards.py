@@ -107,6 +107,14 @@ def test_update_dash_no_name_fails(client):
     assert resp.json.get("error") == "Name is required."
 
 
+def test_update_dash_duplicate_name_fails(client):
+    register(client, "name", "test", "test@gmail.com", "test", "test")
+    create_dashboard(client, "test")
+    create_dashboard(client, "tester")
+    resp = update_dashboard(client, "test", "tester")
+    assert resp.json.get("error") == "A dashboard with that name already exists!"
+
+
 def test_update_another_user_dash_fails(client):
     register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test")

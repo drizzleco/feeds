@@ -135,6 +135,15 @@ def test_update_feed_no_name_fails(client):
     assert resp.json.get("error") == "Name is required."
 
 
+def test_update_feed_duplicate_name_fails(client):
+    register(client, "name", "test", "test@gmail.com", "test", "test")
+    create_dashboard(client, "test dash")
+    create_feed(client, "test feed", "text", "test-dash")
+    create_feed(client, "tester feed", "text", "test-dash")
+    resp = update_feed(client, "test-feed", "tester-feed")
+    assert resp.json.get("error") == "A feed with that name already exists!"
+
+
 def test_update_another_user_feed_fails(client):
     register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test-dash")

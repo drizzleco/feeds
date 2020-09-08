@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% block content%}
+<div id="dashboard" class="container">
+    <div class="row">
+        <h3>[[dashboard.name]]</h3>
+        <p>Created on: [[new Date(dashboard.created).toLocaleString()]]</p>
+        <h5>Feeds</h5>
+        <div class="col s12">
+            <feed-preview v-for="feed in dashboard.feeds" :key="feed.id" :feed="feed"></feed-preview>
+        </div>
+    </div>
+    <div class="fixed-action-btn">
+        <a class="btn-floating btn-large cyan">
+            <i class="large material-icons">add</i>
+        </a>
+        <ul>
+            <li><a class="btn-floating btn-large tooltipped modal-trigger" href="#new-feed" data-position="left"
+                    data-tooltip="Create a new feed"><i class="material-icons">view_stream</i></a></li>
+            <li><a class="btn-floating btn-large tooltipped modal-trigger" href="#edit-dash" data-position="left"
+                    :data-tooltip="'Edit ' + dashboard.name"><i class="material-icons">create</i></a></li>
+            <li><a class="btn-floating btn-large red tooltipped modal-trigger" href="#delete-dash" data-position="left"
+                    :data-tooltip="'Delete ' + dashboard.name"><i class="material-icons">clear</i></a></li>
+        </ul>
+    </div>
+    <div id="new-feed" class="modal">
+        <div class="modal-content">
+            <h4>Create a new feed</h4>
+            <label for="name">Feed Name</label>
+            <input type="text" name="name" id="name" v-model="feedName" />
+            <div class="input-field">
+                <select v-model="feedKind">
+                    <option value="" disabled selected>Choose a type</option>
+                    <option value="text">Text</option>
+                    <option value="number">Number</option>
+                    <option value="boolean">Boolean</option>
+                    <option value="image">Image</option>
+                </select>
+                <label>Feed type</label>
+            </div>
+            <p class="red-text">[[feedError]]</p>
+        </div>
+        <div class="modal-footer">
+            <a class="modal-close waves-effect waves-cyan btn-flat">Cancel</a>
+            <a class="waves-effect waves-cyan btn-flat" @click="createFeed()">Create [[feedName? feedName : 'Feed']]</a>
+        </div>
+    </div>
+    <div id="edit-dash" class="modal">
+        <div class="modal-content">
+            <h4>Edit [[dashboard.name]]</h4>
+            <input type="text" name="name" id="name" v-model="newDashboardName" />
+            <label for="name">Dashboard Name</label>
+            <p class="red-text">[[dashboardError]]</p>
+        </div>
+        <div class="modal-footer">
+            <a class="modal-close waves-effect waves-cyan btn-flat">Cancel</a>
+            <a class="waves-effect waves-cyan btn-flat" @click="updateDash()">Save</a>
+        </div>
+    </div>
+    <div id="delete-dash" class="modal">
+        <div class="modal-content">
+            <h4>Delete [[dashboard.name]]?</h4>
+            <p>Are you sure you want to delete [[dashboard.name]]? This can't be undone!</p>
+        </div>
+        <div class="modal-footer">
+            <a class="modal-close waves-effect waves-cyan btn-flat">Cancel</a>
+            <a class="waves-effect waves-cyan btn-flat" @click="deleteDash()">Delete</a>
+        </div>
+    </div>
+</div>
+<script type="module">
+    import {feedPreview} from '../static/js/components/feedPreview.js'
+    Vue.component('feed-preview', feedPreview)
+    const vm = new Vue({
+        el: "#dashboard",
+        delimiters: ["[[", "]]"],
+        data() {
+            return {
+                newDashboardName: '',
+                dashboardError: '',
+                feedName: '',
+                feedKind: '',
+                feedError: '',
+                dashboard: {},
+            }
+        },
+        methods: {
+            createFeed: function() {
+                axios.post(createFeedPath, {
+                    name:this.feedName, 
+                    kind:this.feedKind, 
+                    dashboard:this.dashboard.slug
+                })
+                .then((response) => {
+                    location.href = '/feeds/' + response.data.feed.slug
+                }).catch((error) => {
+                    this.feedError = error.response.data.error;
+                });
+            },
+            updateDash: function() {
+                axios.put(getDashboardsPath + '/' + this.dashboard.slug, {
+                    name:this.newDashboardName
+                })
+                .then((response) => {
+                    location.href = '/dashboard/' + response.data.dashboard.slug
+                }).catch((error) => {
+                    this.dashboardError = error.response.data.error;
+                });
+            },
+            deleteDash: function() {
+                axios.delete(getDashboardsPath + '/' + this.dashboard.slug)
+                .then((response) => {
+                    location.href = '/home'
+                });
+            }
+        },
+        beforeCreate() {
+            axios.get(getDashboardsPath + '/' + '{{dashboard_slug}}')
+            .then((response) => {
+                this.dashboard = response.data
+                this.newDashboardName = this.dashboard.name
+            }).catch((error) => {
+                location.href = '/home';
+            })
+        }
+    })
+</script>
+{% endblock%}

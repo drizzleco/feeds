@@ -8,8 +8,6 @@ body {
   width: 100%;
   padding-top: 0;
 }
-<<<<<<< HEAD
-=======
 
 #login,
 #register {
@@ -30,11 +28,32 @@ body {
     margin-bottom: 0;
   }
 }
-<<<<<<< HEAD
->>>>>>> 3cdc3fa... add login and registration pages
-=======
 
 .dash-preview {
   cursor: pointer;
 }
->>>>>>> 65735ad... add user homepage(dash display)
+
+.clickable {
+  cursor: pointer;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.bool-mark {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  &.true {
+    background-color: #4caf50;
+  }
+  &.false {
+    background-color: #f44336;
+  }
+}
+
+.d-flex-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

@@ -10,7 +10,12 @@ from models import db, Dashboard
 
 @token_or_session_authenticated(user_scope=True)
 def get_dashboards():
-    return jsonify(dashboards=[dashboard.to_dict() for dashboard in current_user.dashboards]), 200
+    return (
+        jsonify(
+            dashboards=[dashboard.to_dict() for dashboard in current_user.dashboards]
+        ),
+        200,
+    )
 
 
 @token_or_session_authenticated(user_scope=True)
@@ -57,6 +62,8 @@ def update_dashboard(dashboard_slug):
     name = request.json.get("name", None)
     if not name:
         return jsonify(error="Name is required."), 400
+    if Dashboard.query.filter_by(slug=slugify(name), owner=current_user).first():
+        return jsonify(error="A dashboard with that name already exists!"), 400
     if dashboard:
         dashboard.set_name(name)
         db.session.commit()
