@@ -20,7 +20,7 @@ def delete_token(client, token_id):
 
 
 def test_get_tokens_succeeds(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test dash")
     create_feed(client, "test feed", "text", "test-dash")
     create_token(client, "test token", "test-feed", False)
@@ -39,7 +39,7 @@ def test_get_tokens_succeeds(client):
 
 
 def test_create_token_succeeds(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test dash")
     create_feed(client, "test feed", "text", "test-dash")
     resp = create_token(client, "test token", "test-feed", False)
@@ -47,7 +47,7 @@ def test_create_token_succeeds(client):
 
 
 def test_create_token_name_missing_fails(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test dash")
     create_feed(client, "test feed", "text", "test-dash")
     resp = create_token(client)
@@ -55,13 +55,13 @@ def test_create_token_name_missing_fails(client):
 
 
 def test_create_token_nonexisten_feed_fails(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     resp = create_token(client, "test", "blah")
     assert resp.json.get("error") == "blah doesn't exist!"
 
 
 def test_create_token_user_scope_not_boolean_fails(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test dash")
     create_feed(client, "test feed", "text", "test-dash")
     resp = create_token(client, "test token", "test-feed")
@@ -69,7 +69,7 @@ def test_create_token_user_scope_not_boolean_fails(client):
 
 
 def test_delete_token_succeeds(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test dash")
     create_feed(client, "test feed", "text", "test-dash")
     create_token(client, "test token", "test-feed", False)
@@ -78,19 +78,19 @@ def test_delete_token_succeeds(client):
 
 
 def test_delete_nonexistent_token_fails(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     resp = delete_token(client, 1)
     assert resp.json.get("error") == "Token doesn't exist!"
 
 
 def test_invalid_token_fails(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     resp = create_dashboard(client, "test dash", token="invalid token")
     assert resp.json.get("error") == "Oops! Invalid token!"
 
 
 def test_user_scope_token_succeeds(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test dash")
     create_feed(client, "test feed", "text", "test-dash")
     token = create_token(client, "token", "test-feed", user_scope=True).json["token"][
@@ -101,7 +101,7 @@ def test_user_scope_token_succeeds(client):
 
 
 def test_non_user_scope_token_fails(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test dash")
     create_feed(client, "test feed", "text", "test-dash")
     token = create_token(client, "token", "test-feed", user_scope=False).json["token"][
@@ -112,7 +112,7 @@ def test_non_user_scope_token_fails(client):
 
 
 def test_feed_scope_token_succeeds(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test dash")
     create_feed(client, "test feed", "text", "test-dash")
     token = create_token(client, "token", "test-feed", user_scope=False).json["token"][
@@ -123,7 +123,7 @@ def test_feed_scope_token_succeeds(client):
 
 
 def test_non_feed_scope_token_fails(client):
-    register(client, "test", "test@gmail.com", "test", "test")
+    register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test dash")
     create_feed(client, "test feed", "text", "test-dash")
     create_feed(client, "another feed", "text", "test-dash")
