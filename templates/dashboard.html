@@ -96,6 +96,12 @@
                     this.feedError = error.response.data.error;
                 });
             },
+            refreshDash: function() {
+                axios.get(getDashboardsPath + '/' + this.dashboard.slug)
+                .then((response) => {
+                    this.dashboard.feeds = response.data.feeds
+                })
+            },
             updateDash: function() {
                 axios.put(getDashboardsPath + '/' + this.dashboard.slug, {
                     name:this.newDashboardName
@@ -119,6 +125,7 @@
             .then((response) => {
                 this.dashboard = response.data
                 this.newDashboardName = this.dashboard.name
+                setInterval(this.refreshDash, 5000)
             }).catch((error) => {
                 location.href = '/home';
             })

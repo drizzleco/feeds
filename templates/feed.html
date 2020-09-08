@@ -196,6 +196,7 @@
                 this.newFeedName = this.feed.name
                 this.data = this.feed.data
                 this.total = this.data.length
+                setInterval(this.getData, 5000)
             }).catch((error) => {
                 history.back()
             })
