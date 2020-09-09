@@ -2,11 +2,8 @@
 {% block content%}
 <div id="devices" class="container">
     <h2>Devices</h2>
-    <div class="fixed-action-btn">
-        <a class="btn-floating btn-large tooltipped modal-trigger cyan" href="#new" data-position="left"
-            data-tooltip="Add device"><i class="material-icons">add</i></a>
-    </div>
-    <table class="highlight centered responsive-table">
+    <h5 v-if="!tokens.length" class="center-align">No devices yet! Add one below!</h5>
+    <table v-else class="highlight centered responsive-table">
         <thead>
             <tr>
                 <th>Name</th>
@@ -23,10 +20,30 @@
         </tbody>
     </table>
 
-
-    <div id="new-data" class="modal">
+    <div class="fixed-action-btn">
+        <a class="btn-floating btn-large tooltipped modal-trigger cyan" href="#new-device" data-position="left"
+            data-tooltip="Add device"><i class="material-icons">add</i></a>
+    </div>
+    <div id="new-device" class="modal">
         <div class="modal-content">
             <h4>Add device</h4>
+            <div class="input-field">
+                <input id="name" type="text" v-model="newToken.name">
+                <label for="name">Device Name</label>
+            </div>
+            <div class="input-field">
+                <select multiple v-model="newToken.feeds">
+                    <option v-for="feed in userFeeds" :value="feed.slug">[[feed.name]]</option>
+                </select>
+                <label>Select Allowed Feeds</label>
+            </div>
+            <p>
+                <label>
+                    <input type="checkbox" class="filled-in" v-model="newToken.user_scope" />
+                    <span>User scope</span>
+                </label>
+            </p>
+            <p class="red-text">[[tokenError]]</p>
         </div>
         <div class="modal-footer">
             <a class="modal-close waves-effect waves-cyan btn-flat">Cancel</a>
@@ -43,15 +60,32 @@
         delimiters: ["[[", "]]"],
         data() {
             return {
-                tokens: []
+                tokens: [],
+                newToken: {
+                    name: '',
+                    feeds: [],
+                    user_scope: false
+                },
+                userFeeds: [],
+                tokenError: ''
             }
         },
         methods: {
-            getTokens: function() {
-                
+            createToken: function() {
+                axios.post(tokensPath + '/new', this.newToken)
+                .then(() => {
+                    location.href = '/devices'
+                })
+                .catch((error) => {
+                    this.tokenError = error.response.data.error
+                })
             }
         },
         beforeCreate() {
+            axios.get(getFeedsPath)
+            .then((response) => {
+                this.userFeeds = response.data.feeds
+            })
             axios.get(tokensPath)
             .then((response) => {
                 this.tokens = response.data.tokens
