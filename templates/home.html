@@ -3,18 +3,15 @@
 <div id="home" class="container">
     <div class="row">
         <h3>Dashboards</h3>
+        <h5 v-if="!dashboards.length" class="center-align">No dashboards yet! Make one below!</h5>
         <div class="row">
             <dash-preview v-for="dashboard in dashboards" :key="dashboard.id" :dashboard="dashboard"></dash-preview>
         </div>
     </div>
     <div class="fixed-action-btn">
-        <a class="btn-floating btn-large cyan">
-            <i class="large material-icons">settings</i>
-        </a>
-        <ul>
-            <li><a class="btn-floating btn-large tooltipped modal-trigger" href="#new-dashboard" data-position="left"
-                    data-tooltip="Create a new dashboard"><i class="material-icons">dashboard</i></a></li>
-        </ul>
+        <a :class="'btn-floating btn-large tooltipped modal-trigger cyan' + (!dashboards.length ? ' pulse':'') "
+            href="#new-dashboard" data-position="left" data-tooltip="Create a new dashboard"><i
+                class="material-icons">add</i></a>
     </div>
     <div id="new-dashboard" class="modal">
         <div class="modal-content">

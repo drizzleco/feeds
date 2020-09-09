@@ -25,7 +25,7 @@ export const deviceRow = {
                     </td>
                     <div :id="'del-token-'+token.id" class="modal">
                         <div class="modal-content">
-                            <h4>Delete token?</h4>
+                            <h4>Delete device?</h4>
                             <p>Are you sure you want to delete {{token.name}}? This action can't be undone!</p>
                         </div>
                         <div class="modal-footer">

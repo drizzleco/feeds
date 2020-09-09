@@ -5,7 +5,7 @@
         <h3>[[dashboard.name]]</h3>
         <p>Created on: [[toLocaleString(dashboard.created)]]</p>
         <h5>Feeds</h5>
-        <h6 v-if="!dashboard.feeds.length" class="center-align">None yet! Make one below!</h6>
+        <h6 v-if="!dashboard.feeds.length" class="center-align">No feeds yet! Make one below!</h6>
         <div class="col s12">
             <feed-preview v-for="feed in dashboard.feeds" :key="feed.id" :feed="feed"></feed-preview>
         </div>
@@ -92,7 +92,7 @@
                     dashboard:this.dashboard.slug
                 })
                 .then((response) => {
-                    location.href = '/feeds/' + response.data.feed.slug
+                    location.href = '/feed/' + response.data.feed.slug
                 }).catch((error) => {
                     this.feedError = error.response.data.error;
                 });
