@@ -52,13 +52,14 @@ def get_data(feed_slug):
         return jsonify(error="Page must be an integer!"), 400
     if order not in ["asc", "desc"]:
         return jsonify(error="Order must be either 'asc' or 'desc'"), 400
+    data_query = Data.query.filter_by(feed=feed)
     data = (
-        Data.query.filter_by(feed=feed)
-        .order_by(getattr(Data.created, order)())
+        data_query.order_by(getattr(Data.created, order)())
         .paginate(int(page), int(limit), False)
         .items
     )
-    return jsonify(data=[data.to_dict() for data in data])
+    total = data_query.count()
+    return jsonify(data=[data.to_dict() for data in data], total=total)
 
 
 @token_or_session_authenticated(feed_scope=True)

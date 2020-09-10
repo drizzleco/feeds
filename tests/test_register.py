@@ -63,9 +63,7 @@ def test_register_fails_user_exists(client):
 
 def test_register_fails_email_exists(client):
     register(client, "name", "test", "test@gmail.com", "test", "test")
-    resp = register(
-        client, "name", "another test", "test@gmail.com", "password", "password"
-    )
+    resp = register(client, "name", "another test", "test@gmail.com", "password", "password")
     assert resp.json.get("error") == "Email already exists."
 
 

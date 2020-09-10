@@ -1,3 +1,5 @@
 $(document).ready(function () {
-    M.AutoInit();
+    setTimeout(function () {
+        M.AutoInit();
+    }, 150)
 });

@@ -3,15 +3,16 @@
 <div id="dashboard" class="container">
     <div class="row">
         <h3>[[dashboard.name]]</h3>
-        <p>Created on: [[new Date(dashboard.created).toLocaleString()]]</p>
+        <p>Created on: [[toLocaleString(dashboard.created)]]</p>
         <h5>Feeds</h5>
+        <h6 v-if="!dashboard.feeds.length" class="center-align">None yet! Make one below!</h6>
         <div class="col s12">
             <feed-preview v-for="feed in dashboard.feeds" :key="feed.id" :feed="feed"></feed-preview>
         </div>
     </div>
     <div class="fixed-action-btn">
         <a class="btn-floating btn-large cyan">
-            <i class="large material-icons">add</i>
+            <i class="large material-icons">settings</i>
         </a>
         <ul>
             <li><a class="btn-floating btn-large tooltipped modal-trigger" href="#new-feed" data-position="left"
@@ -96,6 +97,12 @@
                     this.feedError = error.response.data.error;
                 });
             },
+            refreshDash: function() {
+                axios.get(getDashboardsPath + '/' + this.dashboard.slug)
+                .then((response) => {
+                    this.dashboard.feeds = response.data.feeds
+                })
+            },
             updateDash: function() {
                 axios.put(getDashboardsPath + '/' + this.dashboard.slug, {
                     name:this.newDashboardName
@@ -111,13 +118,15 @@
                 .then((response) => {
                     location.href = '/home'
                 });
-            }
+            },
+            toLocaleString
         },
         beforeCreate() {
             axios.get(getDashboardsPath + '/' + '{{dashboard_slug}}')
             .then((response) => {
                 this.dashboard = response.data
                 this.newDashboardName = this.dashboard.name
+                setInterval(this.refreshDash, 5000)
             }).catch((error) => {
                 location.href = '/home';
             })

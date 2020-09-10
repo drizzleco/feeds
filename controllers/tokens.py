@@ -4,7 +4,7 @@ from flask import jsonify, request
 from flask_login import current_user
 
 from helpers import token_or_session_authenticated
-from models import db, Token, Feed
+from models import Feed, Token, db
 
 
 @token_or_session_authenticated(user_scope=True)

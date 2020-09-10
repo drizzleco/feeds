@@ -1,6 +1,6 @@
 from client import client
-from test_register import register
 from test_dashboards import create_dashboard
+from test_register import register
 
 
 def get_feed(client, slug):
@@ -53,9 +53,7 @@ def test_get_feeds_returns_feeds(client):
         "owner": "test",
         "slug": "test-feed",
     }
-    assert any(
-        [(k, v) in result.items() for (k, v) in resp.json.get("feeds")[0].items()]
-    )
+    assert any([(k, v) in result.items() for (k, v) in resp.json.get("feeds")[0].items()])
 
 
 def test_get_feed_doesnt_exist_fails(client):

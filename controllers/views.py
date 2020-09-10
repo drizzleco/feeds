@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for
+from flask import redirect, render_template, url_for
 from flask_login import current_user, login_required
 
 
@@ -26,3 +26,8 @@ def user_homepage_view():
 @login_required
 def dashboard_view(dashboard_slug):
     return render_template("dashboard.html", dashboard_slug=dashboard_slug)
+
+
+@login_required
+def feed_view(feed_slug):
+    return render_template("feed.html", feed_slug=feed_slug)

@@ -58,13 +58,9 @@ class Token(db.Model):
     owner_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
     def generate_secret(self):
-        self.secret = "".join(
-            random.choices(string.ascii_letters + string.digits, k=30)
-        )
+        self.secret = "".join(random.choices(string.ascii_letters + string.digits, k=30))
         while not Token.query.filter_by(secret=self.secret).first():
-            self.secret = "".join(
-                random.choices(string.ascii_letters + string.digits, k=30)
-            )
+            self.secret = "".join(random.choices(string.ascii_letters + string.digits, k=30))
 
     def to_dict(self):
         """returns dict representation"""
@@ -142,9 +138,7 @@ class Feed(db.Model):
             "dashboard": self.dashboard.slug if self.dashboard else None,
             "data": [
                 data.to_dict()
-                for data in sorted(
-                    self.data, key=lambda data: data.created, reverse=True
-                )
+                for data in sorted(self.data, key=lambda data: data.created, reverse=True)
             ][:10],
         }
 

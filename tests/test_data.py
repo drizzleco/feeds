@@ -1,7 +1,7 @@
 from client import client
-from test_register import register
 from test_dashboards import create_dashboard
 from test_feeds import create_feed
+from test_register import register
 
 
 def create_data(client, feed_slug="", value=None, token=""):
@@ -73,10 +73,7 @@ def test_create_data_not_number_value_fails(client):
     create_dashboard(client, "test dash")
     create_feed(client, "test feed", "number", "test-dash")
     resp = create_data(client, "test-feed", "100e3")
-    assert (
-        resp.json.get("error")
-        == "Invalid value. Type 'number' was expected but got '100e3'."
-    )
+    assert resp.json.get("error") == "Invalid value. Type 'number' was expected but got '100e3'."
 
 
 def test_create_data_not_boolean_value_fails(client):
@@ -84,10 +81,7 @@ def test_create_data_not_boolean_value_fails(client):
     create_dashboard(client, "test dash")
     create_feed(client, "test feed", "boolean", "test-dash")
     resp = create_data(client, "test-feed", "truee")
-    assert (
-        resp.json.get("error")
-        == "Invalid value. Type 'boolean' was expected but got 'truee'."
-    )
+    assert resp.json.get("error") == "Invalid value. Type 'boolean' was expected but got 'truee'."
 
 
 def test_create_data_not_image_value_fails(client):
@@ -119,10 +113,7 @@ def test_get_data_succeeds(client):
     create_data(client, "test-feed", 3)
     resp = get_data(client, "test-feed")
     assert any(
-        [
-            data["id"] in range(4) and data["value"] in range(4)
-            for data in resp.json.get("data")
-        ]
+        [data["id"] in range(4) and data["value"] in range(4) for data in resp.json.get("data")]
     )
 
 
@@ -136,10 +127,7 @@ def test_get_data_pagination_succeeds(client):
     resp = get_data(client, "test-feed", page=1, limit=2)
     print(resp.json)
     assert any(
-        [
-            data["id"] in range(3) and data["value"] in range(3)
-            for data in resp.json.get("data")
-        ]
+        [data["id"] in range(3) and data["value"] in range(3) for data in resp.json.get("data")]
     )
 
 

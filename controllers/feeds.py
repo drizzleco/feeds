@@ -4,8 +4,8 @@ from flask import jsonify, request
 from flask_login import current_user
 from slugify import slugify
 
-from helpers import token_or_session_authenticated, FEED_TYPES
-from models import db, Feed, Dashboard
+from helpers import FEED_TYPES, token_or_session_authenticated
+from models import Dashboard, Feed, db
 
 
 @token_or_session_authenticated(user_scope=True)
@@ -35,9 +35,7 @@ def new_feed():
     dashboard_slug = request.json.get("dashboard", None)
     if not dashboard_slug:
         return jsonify(error="Dashboard slug is required."), 400
-    dashboard = Dashboard.query.filter_by(
-        slug=dashboard_slug, owner=current_user
-    ).first()
+    dashboard = Dashboard.query.filter_by(slug=dashboard_slug, owner=current_user).first()
     if not dashboard:
         return jsonify(error="Dashboard doesn't exist!"), 400
 

@@ -1,7 +1,3 @@
-import {
-    timeDiffFromNow
-} from '../helpers.js'
-
 export const feedPreview = {
     props: ['feed'],
     template: `<div class = "feed-preview card-panel row teal accent-3 black-text" >

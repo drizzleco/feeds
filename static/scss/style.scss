@@ -57,3 +57,9 @@ body {
   flex-direction: column;
   align-items: center;
 }
+
+.pagination-wrapper {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}

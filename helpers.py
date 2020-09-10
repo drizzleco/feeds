@@ -1,7 +1,7 @@
-from functools import wraps
 import datetime
+from functools import wraps
 
-from flask import redirect, request, jsonify
+from flask import jsonify, redirect, request
 from flask_login import current_user, login_user, logout_user
 
 import models
@@ -42,9 +42,7 @@ def token_or_session_authenticated(user_scope=False, feed_scope=False):
                     ).first()
                     if not feed:
                         return (
-                            jsonify(
-                                error="Oops! Token not authorized to access this feed."
-                            ),
+                            jsonify(error="Oops! Token not authorized to access this feed."),
                             401,
                         )
                 token_obj.last_used = datetime.datetime.utcnow()

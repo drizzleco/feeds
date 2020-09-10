@@ -1,8 +1,8 @@
 from client import client
-from test_register import register
 from test_dashboards import create_dashboard
-from test_feeds import create_feed
 from test_data import create_data
+from test_feeds import create_feed
+from test_register import register
 
 
 def get_tokens(client):
@@ -33,9 +33,7 @@ def test_get_tokens_succeeds(client):
         "owner": "test",
         "user_scope": False,
     }
-    assert any(
-        [(k, v) in result.items() for (k, v) in resp.json.get("tokens")[0].items()]
-    )
+    assert any([(k, v) in result.items() for (k, v) in resp.json.get("tokens")[0].items()])
 
 
 def test_create_token_succeeds(client):
@@ -93,9 +91,7 @@ def test_user_scope_token_succeeds(client):
     register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test dash")
     create_feed(client, "test feed", "text", "test-dash")
-    token = create_token(client, "token", "test-feed", user_scope=True).json["token"][
-        "secret"
-    ]
+    token = create_token(client, "token", "test-feed", user_scope=True).json["token"]["secret"]
     resp = create_dashboard(client, "dash", token=token)
     assert resp.json.get("message") == "Dashboard created successfully!"
 
@@ -104,9 +100,7 @@ def test_non_user_scope_token_fails(client):
     register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test dash")
     create_feed(client, "test feed", "text", "test-dash")
-    token = create_token(client, "token", "test-feed", user_scope=False).json["token"][
-        "secret"
-    ]
+    token = create_token(client, "token", "test-feed", user_scope=False).json["token"]["secret"]
     resp = create_dashboard(client, "test dash", token=token)
     assert resp.json.get("error") == "Oops! Token does not have user scope!"
 
@@ -115,9 +109,7 @@ def test_feed_scope_token_succeeds(client):
     register(client, "name", "test", "test@gmail.com", "test", "test")
     create_dashboard(client, "test dash")
     create_feed(client, "test feed", "text", "test-dash")
-    token = create_token(client, "token", "test-feed", user_scope=False).json["token"][
-        "secret"
-    ]
+    token = create_token(client, "token", "test-feed", user_scope=False).json["token"]["secret"]
     resp = create_data(client, "test-feed", "test", token=token)
     assert resp.json.get("message") == "Data posted!"
 
@@ -127,9 +119,7 @@ def test_non_feed_scope_token_fails(client):
     create_dashboard(client, "test dash")
     create_feed(client, "test feed", "text", "test-dash")
     create_feed(client, "another feed", "text", "test-dash")
-    token = create_token(client, "token", "test-feed", user_scope=False).json["token"][
-        "secret"
-    ]
+    token = create_token(client, "token", "test-feed", user_scope=False).json["token"]["secret"]
     resp = create_data(client, "another-feed", "test", token=token)
     assert resp.json.get("error") == "Oops! Token not authorized to access this feed."
 

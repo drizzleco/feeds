@@ -1,7 +1,7 @@
-from controllers.sessions import *
 from controllers.dashboards import *
-from controllers.feeds import *
 from controllers.data import *
+from controllers.feeds import *
+from controllers.sessions import *
 from controllers.tokens import *
 from controllers.views import *
 
@@ -15,6 +15,7 @@ def router(app):
     app.add_url_rule('/register', endpoint='register_view', view_func=register_view, methods=['GET'])
     app.add_url_rule('/home', endpoint='user_homepage_view', view_func=user_homepage_view, methods=['GET'])
     app.add_url_rule('/dashboard/<dashboard_slug>', endpoint='dashboard_view', view_func=dashboard_view, methods=['GET'])
+    app.add_url_rule('/feed/<feed_slug>', endpoint='feed_view', view_func=feed_view, methods=['GET'])
     # API ROUTES
     # user routes
     app.add_url_rule("/register", view_func=register, methods=["POST"])
