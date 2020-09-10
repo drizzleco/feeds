@@ -8,6 +8,7 @@ const createDashboardPath = apiPath + '/dashboards/new'
 const getFeedsPath = apiPath + '/feeds'
 const createFeedPath = apiPath + '/feeds/new'
 const tokensPath = apiPath + '/tokens'
+const profilePath = apiPath + '/me'
 
 function logout() {
     axios.delete(logoutPath).then(function () {
