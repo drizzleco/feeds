@@ -1,11 +1,11 @@
 export const feedPreview = {
     props: ['feed'],
     template: `<div class = "feed-preview card-panel row teal accent-3 black-text" >
-        <div class = "col m6 s12 d-flex-center">
+        <div class = "col m6 s12 flex-col-center">
             <h4 class="clickable" @click="this.window.location='/feed/'+feed.slug">{{feed.name}}</h4>
             <span v-if="feed.data.length">Last updated {{timeDiffFromNow(feed.data[0].created)}} ago</span>
         </div>
-        <div class = "col m6 s12 d-flex-center">
+        <div class = "col m6 s12 flex-col-center">
             <h6>Last value:</h6>
             <span v-if="!feed.data.length">No data yet!</span>
             <div v-if="feed.data.length">

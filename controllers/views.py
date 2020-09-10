@@ -31,3 +31,8 @@ def dashboard_view(dashboard_slug):
 @login_required
 def feed_view(feed_slug):
     return render_template("feed.html", feed_slug=feed_slug)
+
+
+@login_required
+def devices_view():
+    return render_template("devices.html")

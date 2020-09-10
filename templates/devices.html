@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% block content%}
+<div id="devices" class="container">
+    <h2>Devices</h2>
+    <h5 v-if="!tokens.length" class="center-align">No devices yet! Add one below!</h5>
+    <table v-else class="highlight centered responsive-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Token</th>
+                <th>Feeds</th>
+                <th>User Scope?</th>
+                <th>Last Used</th>
+                <th>Created</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr is="device-row" v-for="token in tokens" :key="token.id" :token="token" />
+        </tbody>
+    </table>
+
+    <div class="fixed-action-btn">
+        <a class="btn-floating btn-large tooltipped modal-trigger cyan" href="#new-device" data-position="left"
+            data-tooltip="Add device"><i class="material-icons">add</i></a>
+    </div>
+    <div id="new-device" class="modal">
+        <div class="modal-content">
+            <h4>Add device</h4>
+            <div class="input-field">
+                <input id="name" type="text" v-model="newToken.name">
+                <label for="name">Device Name</label>
+            </div>
+            <div class="input-field">
+                <select multiple v-model="newToken.feeds">
+                    <option v-for="feed in userFeeds" :value="feed.slug">[[feed.name]]</option>
+                </select>
+                <label>Select Allowed Feeds</label>
+            </div>
+            <p>
+                <label>
+                    <input type="checkbox" class="filled-in" v-model="newToken.user_scope" />
+                    <span>User scope</span>
+                </label>
+            </p>
+            <p class="red-text">[[tokenError]]</p>
+        </div>
+        <div class="modal-footer">
+            <a class="modal-close waves-effect waves-cyan btn-flat">Cancel</a>
+            <a class="waves-effect waves-cyan btn-flat" @click="createToken()">Add Device</a>
+        </div>
+    </div>
+
+</div>
+<script type="module">
+    import {deviceRow} from './static/js/components/deviceRow.js'
+    Vue.component('device-row', deviceRow)
+    const vm = new Vue({
+        el: "#devices",
+        delimiters: ["[[", "]]"],
+        data() {
+            return {
+                tokens: [],
+                newToken: {
+                    name: '',
+                    feeds: [],
+                    user_scope: false
+                },
+                userFeeds: [],
+                tokenError: ''
+            }
+        },
+        methods: {
+            createToken: function() {
+                axios.post(tokensPath + '/new', this.newToken)
+                .then(() => {
+                    location.href = '/devices'
+                })
+                .catch((error) => {
+                    this.tokenError = error.response.data.error
+                })
+            }
+        },
+        beforeCreate() {
+            axios.get(getFeedsPath)
+            .then((response) => {
+                this.userFeeds = response.data.feeds
+            })
+            axios.get(tokensPath)
+            .then((response) => {
+                this.tokens = response.data.tokens
+            });
+        },
+    })
+</script>
+{% endblock%}

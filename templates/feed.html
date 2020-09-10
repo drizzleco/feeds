@@ -10,7 +10,7 @@
         <h4>No data yet!</h4>
         <a class="waves-effect waves-light btn cyan modal-trigger" href="#help">Get Started!</a>
     </div>
-    <div v-if="data.length" class="d-flex-center">
+    <div v-if="data.length" class="flex-col-center">
         <h5 v-if="feed.kind=='text'">[[data[0].value]]</h5>
         <h2 v-if="feed.kind=='number'">[[data[0].value]]</h2>
         <img width="100%" :src="data[0].value" v-if="feed.kind=='image'">
@@ -19,7 +19,7 @@
     <div v-if="data.length">
         <h5>Data Log:</h5>
         <div class="container">
-            <table class="highlight centered">
+            <table class="highlight centered responsive-table">
                 <thead>
                     <tr>
                         <th>Value</th>
