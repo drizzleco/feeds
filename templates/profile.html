@@ -23,7 +23,9 @@
             <input id="confirm" type="password" v-model="newUser.confirm">
             <label for="confirm">Confirm new password</label>
         </div>
-        <a class="waves-effect waves-light btn cyan">Save</a>
+        <a class="waves-effect waves-light btn cyan" @click="updateUser()">Save</a>
+        <p class="red-text">[[error]]</p>
+        <p class="green-text">[[success]]</p>
     </form>
 </div>
 <script>
@@ -38,12 +40,22 @@
                     email: '',
                     password: '',
                     confirm: '',
-                }
+                },
+                error: '',
+                success: ''
             }
         },
         methods: {
             updateUser: function () {
-                // TODO 
+                axios.put('/me', this.newUser)
+                    .then((response) => {
+                        this.success = response.data.message
+                        this.error = ''
+                    })
+                    .catch((error) => {
+                        this.error = error.response.data.error
+                        this.success = ''
+                    })
             }
         },
         beforeCreate() {
@@ -57,6 +69,11 @@
                     console.log(error)
                 })
         },
+        mounted() {
+            setTimeout(function () {
+                M.updateTextFields()
+            }, 1)
+        }
     })
 </script>
 {% endblock%}

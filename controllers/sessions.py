@@ -99,7 +99,10 @@ def update_profile():
     password = request.json.get("password", None)
     confirm = request.json.get("confirm", None)
     if username:
-        if User.query.filter_by(username=username).first():
+        if (
+            username != current_user.username
+            and User.query.filter_by(username=username).first()
+        ):
             return jsonify(error="Username taken"), 400
         current_user.username = username
     if name:
@@ -107,7 +110,7 @@ def update_profile():
     if email:
         if not validators.email(email):
             return jsonify(error="Invalid email"), 400
-        if User.query.filter_by(email=email).first():
+        if email != current_user.email and User.query.filter_by(email=email).first():
             return jsonify(error="Email taken"), 400
         current_user.email = email
     if password:
