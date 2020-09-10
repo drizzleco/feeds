@@ -11,6 +11,56 @@ from models import Data, Feed, db
 
 @token_or_session_authenticated(feed_scope=True)
 def create_data(feed_slug):
+    """Post Data
+    Post a data point to a feed
+    ---
+    definitions:
+        Data:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: data ID
+                value:
+                    type:
+                        - string
+                        - bool
+                        - number
+                    description: data value
+                created:
+                    type: string
+                    description: data posted datetime
+                feed:
+                    type: string
+                    description: slug of feed data belongs to
+    parameters:
+        - name: feed_slug
+          in: path
+          type: string
+          required: true
+        - name: value
+          in: body
+          schema:
+            type: object
+            required:
+              - value
+            properties:
+              value:
+                type: stringboolnumber
+                description: value of data to post. must be the same data type as feed kind
+    responses:
+        200:
+            description: success
+            schema:
+                type: object
+                properties:
+                    message:
+                        type: string
+                    data:
+                        $ref: '#/definitions/Data'
+        400:
+            $ref: '#/definitions/Error'
+    """
     feed = Feed.query.filter_by(slug=feed_slug, owner=current_user).first()
     if not feed:
         return jsonify(error="Feed doesn't exist!"), 400
@@ -40,6 +90,45 @@ def create_data(feed_slug):
 
 @token_or_session_authenticated(feed_scope=True)
 def get_data(feed_slug):
+    """Get Data
+    Get data for a Feed
+    ---
+    parameters:
+        - name: feed_slug
+          in: path
+          type: string
+          required: true
+        - name: limit
+          in: query
+          type: integer
+          description: total number of results to return. Default is 10
+        - name: page
+          in: query
+          type: integer
+          description: page number to retreive. Default is 1
+        - name: order
+          in: query
+          type: string
+          enum:
+            - desc
+            - asc
+          description: order to retrieve data in sorted by posted date. Default is 'desc'
+    responses:
+        200:
+            description: Data from feed
+            schema:
+                type: object
+                properties:
+                    data:
+                        type: array
+                        items:
+                            $ref: '#/definitions/Data'
+                    total:
+                        type: integer
+                        description: total data points on Feed
+        400:
+            $ref: '#/definitions/Error'
+    """
     feed = Feed.query.filter_by(slug=feed_slug, owner=current_user).first()
     if not feed:
         return jsonify(error="Feed doesn't exist!"), 400
@@ -64,6 +153,31 @@ def get_data(feed_slug):
 
 @token_or_session_authenticated(feed_scope=True)
 def delete_data(feed_slug, data_id):
+    """Delete Data
+    Delete a data point from feed
+    ---
+    parameters:
+        - name: feed_slug
+          in: path
+          type: string
+          required: true
+        - name: data_id
+          in: path
+          type: integer
+          required: true
+    responses:
+        200:
+            description: success
+            schema:
+                type: object
+                properties:
+                    message:
+                        type: string
+                        enum:
+                            - Data point deleted!
+        400:
+            $ref: '#/definitions/Error'
+    """
     feed = Feed.query.filter_by(slug=feed_slug, owner=current_user).first()
     if not feed:
         return jsonify(error="Feed doesn't exist!"), 400
