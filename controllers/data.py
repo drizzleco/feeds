@@ -14,25 +14,8 @@ def create_data(feed_slug):
     """Post Data
     Post a data point to a feed
     ---
-    definitions:
-        Data:
-            type: object
-            properties:
-                id:
-                    type: integer
-                    description: data ID
-                value:
-                    type:
-                        - string
-                        - bool
-                        - number
-                    description: data value
-                created:
-                    type: string
-                    description: data posted datetime
-                feed:
-                    type: string
-                    description: slug of feed data belongs to
+    tags:
+        - "Data Points"
     parameters:
         - name: feed_slug
           in: path
@@ -50,7 +33,7 @@ def create_data(feed_slug):
                 description: value of data to post. must be the same data type as feed kind
     responses:
         200:
-            description: success
+            description: Success
             schema:
                 type: object
                 properties:
@@ -59,7 +42,7 @@ def create_data(feed_slug):
                     data:
                         $ref: '#/definitions/Data'
         400:
-            $ref: '#/definitions/Error'
+            $ref: '#/responses/Error'
     """
     feed = Feed.query.filter_by(slug=feed_slug, owner=current_user).first()
     if not feed:
@@ -93,6 +76,8 @@ def get_data(feed_slug):
     """Get Data
     Get data for a Feed
     ---
+    tags:
+        - "Data Points"
     parameters:
         - name: feed_slug
           in: path
@@ -101,7 +86,7 @@ def get_data(feed_slug):
         - name: limit
           in: query
           type: integer
-          description: total number of results to return. Default is 10
+          description: total number of results to return per page. Default is 10
         - name: page
           in: query
           type: integer
@@ -109,10 +94,7 @@ def get_data(feed_slug):
         - name: order
           in: query
           type: string
-          enum:
-            - desc
-            - asc
-          description: order to retrieve data in sorted by posted date. Default is 'desc'
+          description: order to retrieve data in sorted by the data point's posted datetime. Must be either 'asc' or 'desc'. Default is 'desc'
     responses:
         200:
             description: Data from feed
@@ -127,7 +109,7 @@ def get_data(feed_slug):
                         type: integer
                         description: total data points on Feed
         400:
-            $ref: '#/definitions/Error'
+            $ref: '#/responses/Error'
     """
     feed = Feed.query.filter_by(slug=feed_slug, owner=current_user).first()
     if not feed:
@@ -156,6 +138,8 @@ def delete_data(feed_slug, data_id):
     """Delete Data
     Delete a data point from feed
     ---
+    tags:
+        - "Data Points"
     parameters:
         - name: feed_slug
           in: path
@@ -165,9 +149,10 @@ def delete_data(feed_slug, data_id):
           in: path
           type: integer
           required: true
+          description: ID of Data Point to delete
     responses:
         200:
-            description: success
+            description: Success
             schema:
                 type: object
                 properties:
@@ -176,7 +161,7 @@ def delete_data(feed_slug, data_id):
                         enum:
                             - Data point deleted!
         400:
-            $ref: '#/definitions/Error'
+            $ref: '#/responses/Error'
     """
     feed = Feed.query.filter_by(slug=feed_slug, owner=current_user).first()
     if not feed:

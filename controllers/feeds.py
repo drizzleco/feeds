@@ -13,44 +13,18 @@ def get_feeds():
     """Get Feeds
     Return all feeds belonging to user
     ---
-    definitions:
-        Feed:
-            type: object
-            properties:
-                id:
-                    type: integer
-                    description: feed ID
-                name:
-                    type: string
-                    description: feed name
-                slug:
-                    type: string
-                    description: feed slug
-                kind:
-                    type: string
-                    description: feed type
-                    enum: ["text", "number", "boolean", "image"]
-                created:
-                    type: string
-                    description: feed creation datetime
-                owner:
-                    type: string
-                    description: username of feed's owner
-                dashboard:
-                    type: string
-                    description: slug of dashboard feed is attached to
-                data:
-                    type: array
-                    items:
-                        $ref: '#/definitions/Data'
-                    description: list of data posted to feed
+    tags:
+        - "Feeds"
     responses:
       200:
-        description: A list the user's feeds
+        description: A list of the user's feeds
         schema:
-            type: array
-            items:
-                $ref: '#/definitions/Feed'
+            type: object
+            properties:
+                feeds:
+                    type: array
+                    items:
+                        $ref: '#/definitions/Feed'
     """
     return jsonify(feeds=[feed.to_dict() for feed in current_user.feeds]), 200
 
@@ -60,6 +34,8 @@ def get_feed(feed_slug):
     """Get a Feed
     Return info for one Feed
     ---
+    tags:
+        - "Feeds"
     parameters:
         - name: feed_slug
           in: path
@@ -71,7 +47,7 @@ def get_feed(feed_slug):
             schema:
                 $ref: '#/definitions/Feed'
         400:
-            $ref: '#/definitions/Error'
+            $ref: '#/responses/Error'
     """
     feed = Feed.query.filter_by(slug=feed_slug, owner=current_user).first()
     if feed:
@@ -85,6 +61,8 @@ def new_feed():
     """New Feed
     Create a new Feed
     ---
+    tags:
+        - "Feeds"
     parameters:
         - name: name
           in: body
@@ -92,6 +70,8 @@ def new_feed():
             type: object
             required:
               - name
+              - kind
+              - dashboard
             properties:
                 name:
                     type: string
@@ -105,16 +85,16 @@ def new_feed():
                     description: slug of dashboard new feed belongs to
     responses:
         200:
-            description: success
+            description: Success
             schema:
                 type: object
                 properties:
                     message:
                         type: string
-                    dashboard:
+                    feed:
                         $ref: '#/definitions/Feed'
         400:
-            $ref: '#/definitions/Error'
+            $ref: '#/responses/Error'
     """
     name = request.json.get("name", None)
     if not name:
@@ -156,6 +136,8 @@ def update_feed(feed_slug):
     """Update Feed
     Update an existing Feed
     ---
+    tags:
+        - "Feeds"
     parameters:
         - name: feed_slug
           in: path
@@ -173,16 +155,16 @@ def update_feed(feed_slug):
                 description: new name for feed
     responses:
         200:
-            description: success
+            description: Success
             schema:
                 type: object
                 properties:
                     message:
                         type: string
-                    dashboard:
-                        $ref: '#/definitions/Fashboard'
+                    feed:
+                        $ref: '#/definitions/Feed'
         400:
-            $ref: '#/definitions/Error'
+            $ref: '#/responses/Error'
     """
     feed = Feed.query.filter_by(slug=feed_slug, owner=current_user).first()
     if not feed:
@@ -203,6 +185,8 @@ def delete_feed(feed_slug):
     """Delete Feed
     Delete an existing Feed
     ---
+    tags:
+        - "Feeds"
     parameters:
         - name: feed_slug
           in: path
@@ -210,7 +194,7 @@ def delete_feed(feed_slug):
           required: true
     responses:
         200:
-            description: success
+            description: Success
             schema:
                 type: object
                 properties:
@@ -219,7 +203,7 @@ def delete_feed(feed_slug):
                         enum:
                             - Feed deleted!
         400:
-            $ref: '#/definitions/Error'
+            $ref: '#/responses/Error'
     """
     feed = Feed.query.filter_by(slug=feed_slug, owner=current_user)
     if not feed.first():

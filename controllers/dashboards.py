@@ -10,40 +10,21 @@ from models import Dashboard, db
 
 @token_or_session_authenticated(user_scope=True)
 def get_dashboards():
-    """Get Dasboards
+    """Get Dashboards
     Return all dashboards belonging to user
     ---
-    definitions:
-        Dashboard:
-            type: object
-            properties:
-                id:
-                    type: integer
-                    description: dashboard ID
-                name:
-                    type: string
-                    description: dashboard name
-                slug:
-                    type: string
-                    description: dashboard slug
-                created:
-                    type: string
-                    description: dashboard creation datetime
-                owner:
-                    type: string
-                    description: username of dashboard's owner
-                feeds:
-                    type: array
-                    items:
-                        $ref: '#/definitions/Feed'
-                    description: list of feed attached to dashboard
+    tags:
+        - "Dashboards"
     responses:
       200:
-        description: A list the user's dashboards
+        description: A list of the user's dashboards
         schema:
-            type: array
-            items:
-                $ref: '#/definitions/Dashboard'
+            type: object
+            properties:
+                dashboards:
+                    type: array
+                    items:
+                        $ref: '#/definitions/Dashboard'
     """
     return (
         jsonify(
@@ -58,15 +39,8 @@ def get_dashboard(dashboard_slug):
     """Get a Dashboard
     Return info for one Dashboard
     ---
-    definitions:
-        Error:
-            description: error
-            schema:
-                type: object
-                properties:
-                    error:
-                        type: string
-                        description: error message
+    tags:
+        - "Dashboards"
     parameters:
         - name: dashboard_slug
           in: path
@@ -78,7 +52,7 @@ def get_dashboard(dashboard_slug):
             schema:
                 $ref: '#/definitions/Dashboard'
         400:
-            $ref: '#/definitions/Error'
+            $ref: '#/responses/Error'
     """
     dashboard = Dashboard.query.filter_by(
         slug=dashboard_slug, owner=current_user
@@ -94,6 +68,8 @@ def new_dashboard():
     """New Dashboard
     Create a new Dashboard
     ---
+    tags:
+        - "Dashboards"
     parameters:
         - name: name
           in: body
@@ -107,7 +83,7 @@ def new_dashboard():
                 description: name of new dashboard
     responses:
         200:
-            description: success
+            description: Success
             schema:
                 type: object
                 properties:
@@ -116,7 +92,7 @@ def new_dashboard():
                     dashboard:
                         $ref: '#/definitions/Dashboard'
         400:
-            $ref: '#/definitions/Error'
+            $ref: '#/responses/Error'
     """
     name = request.json.get("name", None)
     if not name:
@@ -146,6 +122,8 @@ def update_dashboard(dashboard_slug):
     """Update Dashboard
     Update an existing Dashboard
     ---
+    tags:
+        - "Dashboards"
     parameters:
         - name: dashboard_slug
           in: path
@@ -163,7 +141,7 @@ def update_dashboard(dashboard_slug):
                 description: new name for dashboard
     responses:
         200:
-            description: success
+            description: Success
             schema:
                 type: object
                 properties:
@@ -172,7 +150,7 @@ def update_dashboard(dashboard_slug):
                     dashboard:
                         $ref: '#/definitions/Dashboard'
         400:
-            $ref: '#/definitions/Error'
+            $ref: '#/responses/Error'
     """
     dashboard = Dashboard.query.filter_by(
         slug=dashboard_slug, owner=current_user
@@ -197,6 +175,8 @@ def delete_dashboard(dashboard_slug):
     """Delete Dashboard
     Delete an existing Dashboard
     ---
+    tags:
+        - "Dashboards"
     parameters:
         - name: dashboard_slug
           in: path
@@ -204,7 +184,7 @@ def delete_dashboard(dashboard_slug):
           required: true
     responses:
         200:
-            description: success
+            description: Success
             schema:
                 type: object
                 properties:
@@ -213,7 +193,7 @@ def delete_dashboard(dashboard_slug):
                         enum:
                             - Dashboard deleted!
         400:
-            $ref: '#/definitions/Error'
+            $ref: '#/responses/Error'
     """
     dashboard = Dashboard.query.filter_by(slug=dashboard_slug, owner=current_user)
     if not dashboard.first():
