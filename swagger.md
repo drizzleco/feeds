@@ -26,7 +26,7 @@ To authenticate requests you may either:
     ```
     {
         ...
-        "token"="TOKEN_HERE"
+        "token": "TOKEN_HERE"
     }
     ```
 
