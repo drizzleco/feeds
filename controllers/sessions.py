@@ -4,6 +4,7 @@ import validators
 from flask import Flask, jsonify, render_template, request
 from flask_login import current_user, login_user, logout_user
 
+from helpers import token_or_session_authenticated
 from models import User, db
 
 
@@ -87,6 +88,7 @@ def logout():
     return jsonify(message="Successfully logged out"), 200
 
 
+@token_or_session_authenticated(user_scope=True)
 def update_profile():
     if not request.is_json:
         return jsonify(error="Missing JSON in request"), 400
@@ -97,12 +99,19 @@ def update_profile():
     password = request.json.get("password", None)
     confirm = request.json.get("confirm", None)
     if username:
+        if (
+            username != current_user.username
+            and User.query.filter_by(username=username).first()
+        ):
+            return jsonify(error="Username taken"), 400
         current_user.username = username
     if name:
         current_user.name = name
     if email:
         if not validators.email(email):
             return jsonify(error="Invalid email"), 400
+        if email != current_user.email and User.query.filter_by(email=email).first():
+            return jsonify(error="Email taken"), 400
         current_user.email = email
     if password:
         if password != confirm:
@@ -110,3 +119,8 @@ def update_profile():
         current_user.set_password(password)
     db.session.commit()
     return jsonify(message="Successfully updated!", user=current_user.to_dict()), 200
+
+
+@token_or_session_authenticated(user_scope=True)
+def user_info():
+    return jsonify(current_user.to_dict()), 200

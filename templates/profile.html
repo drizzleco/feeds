@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block content%}
+<div id="profile" class="container">
+    <h2>Update Profile</h2>
+    <form class="container">
+        <div class="input-field">
+            <input id="name" type="text" v-model="newUser.name">
+            <label for="name">Name</label>
+        </div>
+        <div class="input-field">
+            <input id="username" type="text" v-model="newUser.username">
+            <label for="username">Username</label>
+        </div>
+        <div class="input-field">
+            <input id="email" type="email" class="validate" v-model="newUser.email">
+            <label for="email">Email</label>
+        </div>
+        <div class="input-field">
+            <input id="password" type="password" v-model="newUser.password">
+            <label for="password">New Password</label>
+        </div>
+        <div class="input-field">
+            <input id="confirm" type="password" v-model="newUser.confirm">
+            <label for="confirm">Confirm new password</label>
+        </div>
+        <a class="waves-effect waves-light btn cyan" @click="updateUser()">Save</a>
+        <p class="red-text">[[error]]</p>
+        <p class="green-text">[[success]]</p>
+    </form>
+</div>
+<script>
+    const vm = new Vue({
+        el: "#profile",
+        delimiters: ["[[", "]]"],
+        data() {
+            return {
+                newUser: {
+                    name: '',
+                    username: '',
+                    email: '',
+                    password: '',
+                    confirm: '',
+                },
+                error: '',
+                success: ''
+            }
+        },
+        methods: {
+            updateUser: function () {
+                axios.put('/me', this.newUser)
+                    .then((response) => {
+                        this.success = response.data.message
+                        this.error = ''
+                    })
+                    .catch((error) => {
+                        this.error = error.response.data.error
+                        this.success = ''
+                    })
+            }
+        },
+        beforeCreate() {
+            axios.get(profilePath)
+                .then((response) => {
+                    this.newUser.name = response.data.name
+                    this.newUser.email = response.data.email
+                    this.newUser.username = response.data.username
+                })
+                .catch((error) => {
+                    console.log(error)
+                })
+        },
+        mounted() {
+            setTimeout(function () {
+                M.updateTextFields()
+            }, 1)
+        }
+    })
+</script>
+{% endblock%}

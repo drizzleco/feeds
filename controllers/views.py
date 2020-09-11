@@ -36,3 +36,8 @@ def feed_view(feed_slug):
 @login_required
 def devices_view():
     return render_template("devices.html")
+
+
+@login_required
+def profile_view():
+    return render_template("profile.html")

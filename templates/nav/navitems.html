@@ -1,9 +1,12 @@
-{% if not current_user.is_anonymous %}
+{% if current_user.is_authenticated %}
 <li><a href="/home">Home</a></li>
 <li><a href="/devices">Devices</a></li>
-<li><a onclick="logout()">Logout</a></li>
+<li><a href="/me">Profile</a></li>
 {% else %}
 <li><a href="/login">Login</a></li>
 <li><a href="/register">Register</a></li>
 {% endif %}
 <li><a href="/api">API Reference</a></li>
+{% if current_user.is_authenticated %}
+<li><a onclick="logout()">Logout</a></li>
+{% endif %}
