@@ -90,6 +90,45 @@ def logout():
 
 @token_or_session_authenticated(user_scope=True)
 def update_profile():
+    """Update User Profile
+    Update your user profile information.
+    ---
+    tags:
+        - "Users"
+    parameters:
+        - name: user
+          in: body
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                description: new name
+              username:
+                type: string
+                description: new username
+              email:
+                type: string
+                description: new email
+              password:
+                type: string
+                description: new password
+              confirm:
+                type: string
+                description: confirm new password
+    responses:
+        200:
+            description: Success
+            schema:
+                type: object
+                properties:
+                    message:
+                        type: string
+                    user:
+                        $ref: '#/definitions/User'
+        400:
+            $ref: '#/responses/Error'
+    """
     if not request.is_json:
         return jsonify(error="Missing JSON in request"), 400
 
@@ -123,4 +162,15 @@ def update_profile():
 
 @token_or_session_authenticated(user_scope=True)
 def user_info():
+    """Get current user info
+    Return user info for token's owner
+    ---
+    tags:
+        - "Users"
+    responses:
+        200:
+            description: The User object
+            schema:
+                $ref: '#/definitions/User'
+    """
     return jsonify(current_user.to_dict()), 200

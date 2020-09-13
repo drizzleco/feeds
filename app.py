@@ -2,8 +2,9 @@ from flask import Flask, jsonify, redirect, render_template, request, url_for
 from flask_assets import Bundle, Environment
 from flask_cors import CORS
 from flask_login import LoginManager
+from flasgger import Swagger
 
-from config import Config
+from config import Config, swagger_config, swagger_template
 from models import User, db
 from router import router
 
@@ -31,8 +32,10 @@ def create_app():
 
     @login_manager.unauthorized_handler
     def unauthorized():
-        # do stuff
         return redirect(url_for("login_view"))
+
+    # setup swagger
+    Swagger(app, template=swagger_template, config=swagger_config)
 
     # set up router
     router(app)
