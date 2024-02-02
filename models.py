@@ -59,7 +59,7 @@ class Token(db.Model):
 
     def generate_secret(self):
         self.secret = "".join(random.choices(string.ascii_letters + string.digits, k=30))
-        while not Token.query.filter_by(secret=self.secret).first():
+        while Token.query.filter_by(secret=self.secret).first():
             self.secret = "".join(random.choices(string.ascii_letters + string.digits, k=30))
 
     def to_dict(self):
