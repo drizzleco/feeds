@@ -91,6 +91,9 @@
                 this.tokens = response.data.tokens
             });
         },
+        componentDidMount() {
+            M.AutoInit();
+        }
     })
 </script>
 {% endblock%}

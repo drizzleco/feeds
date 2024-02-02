@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: feeds
+  namespace: pz
+spec:
+  rules:
+    - host: feeds.isupinthe.cloud
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: feeds
+                port:
+                  name: http
